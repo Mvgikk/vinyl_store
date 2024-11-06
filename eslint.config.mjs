@@ -44,6 +44,12 @@ export default [
       "@typescript-eslint": pluginTs,
     },
   },
+  {
+    files: ["src/database/migrations/*.ts"],
+    rules: {
+      quotes: "off",
+    },
+  },
   pluginJs.configs.recommended,
 
 ];
