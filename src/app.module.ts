@@ -7,6 +7,8 @@ import development from 'config/development';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { TypeOrmConfigService } from './database/typeorm-config.service';
 import { VinylModule } from './vinyl/vinyl.module';
+import { ReviewModule } from './review/review.module';
+import { OrderModule } from './order/order.module';
 
 @Module({
     imports: [
@@ -19,6 +21,8 @@ import { VinylModule } from './vinyl/vinyl.module';
         }),
         UserModule,
         VinylModule,
+        ReviewModule,
+        OrderModule,
     ],
     controllers: [AppController],
     providers: [AppService],

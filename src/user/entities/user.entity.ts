@@ -4,7 +4,10 @@ import {
     PrimaryGeneratedColumn,
     CreateDateColumn,
     UpdateDateColumn,
+    OneToMany,
 } from 'typeorm';
+import { Order } from '../../order/entities/order.entity';
+import { Review } from '../../review/entities/review.entity';
 
 @Entity()
 export class User {
@@ -37,4 +40,10 @@ export class User {
 
     @UpdateDateColumn()
         updatedAt: Date;
+
+    @OneToMany(() => Order, order => order.user)
+        orders: Order[];
+
+    @OneToMany(() => Review, review => review.user)
+        reviews: Review[];
 }
