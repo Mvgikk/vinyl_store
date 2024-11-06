@@ -11,20 +11,20 @@ import { Vinyl } from '../../vinyl/entities/vinyl.entity';
 @Entity()
 export class Review {
     @PrimaryGeneratedColumn()
-        id: number;
+    id: number;
 
     @Column('int')
-        rating: number;
+    rating: number;
 
     @Column('text', { nullable: true })
-        comment: string;
+    comment: string;
 
     @CreateDateColumn()
-        createdAt: Date;
+    createdAt: Date;
 
-    @ManyToOne(() => User, user => user.reviews)
-        user: User;
+    @ManyToOne(() => User, (user) => user.reviews, { onDelete: 'CASCADE' })
+    user: User;
 
-    @ManyToOne(() => Vinyl, vinyl => vinyl.reviews)
-        vinyl: Vinyl;
+    @ManyToOne(() => Vinyl, (vinyl) => vinyl.reviews, { onDelete: 'CASCADE' })
+    vinyl: Vinyl;
 }

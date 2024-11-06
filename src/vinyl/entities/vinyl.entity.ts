@@ -12,29 +12,29 @@ import { OrderItem } from '../../order/entities/order-item.entity';
 @Entity()
 export class Vinyl {
     @PrimaryGeneratedColumn()
-        id: number;
+    id: number;
 
     @Column()
-        name: string;
+    name: string;
 
     @Column()
-        author: string;
+    author: string;
 
     @Column({ nullable: true })
-        description: string;
+    description: string;
 
     @Column('decimal')
-        price: number;
+    price: number;
 
     @CreateDateColumn()
-        createdAt: Date;
+    createdAt: Date;
 
     @UpdateDateColumn()
-        updatedAt: Date;
+    updatedAt: Date;
 
-    @OneToMany(() => Review, review => review.vinyl)
-        reviews: Review[];
+    @OneToMany(() => Review, (review) => review.vinyl)
+    reviews: Review[];
 
-    @OneToMany(() => OrderItem, orderItem => orderItem.vinyl)
-        orderItems: OrderItem[];
+    @OneToMany(() => OrderItem, (orderItem) => orderItem.vinyl)
+    orderItems: OrderItem[];
 }
