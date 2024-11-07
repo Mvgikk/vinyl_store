@@ -7,7 +7,9 @@ import { ConfigModule } from '@nestjs/config';
 import development from 'config/development';
 
 @Module({
-    imports: [UserSeedModule, VinylSeedModule,
+    imports: [
+        UserSeedModule,
+        VinylSeedModule,
         ConfigModule.forRoot({
             isGlobal: true,
             load: [development],
