@@ -1,15 +1,9 @@
-import {
-    Controller,
-    Get,
-    Param,
-    Delete,
-} from '@nestjs/common';
+import { Controller, Get, Param, Delete } from '@nestjs/common';
 import { VinylService } from './vinyl.service';
 
 @Controller('vinyl')
 export class VinylController {
     constructor(private readonly vinylService: VinylService) {}
-
 
     @Get()
     findAll() {
@@ -20,7 +14,6 @@ export class VinylController {
     findOne(@Param('id') id: string) {
         return this.vinylService.findOne(+id);
     }
-
 
     @Delete(':id')
     remove(@Param('id') id: string) {

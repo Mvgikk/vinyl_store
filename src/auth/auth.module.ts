@@ -6,12 +6,17 @@ import { UserModule } from '../user/user.module';
 import { JwtStrategy } from './strategies/jwt.strategy';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { SharedModule } from 'src/shared/shared.module';
+import { PassportModule } from '@nestjs/passport';
+import { GoogleStrategy } from './strategies/google.strategy';
+import { SessionModule } from 'src/session/session.module';
 
 @Module({
     imports: [
+        PassportModule,
         SharedModule,
         UserModule,
         ConfigModule,
+        SessionModule,
         JwtModule.registerAsync({
             imports: [ConfigModule],
             inject: [ConfigService],
@@ -20,7 +25,7 @@ import { SharedModule } from 'src/shared/shared.module';
             }),
         }),
     ],
-    providers: [AuthService, JwtStrategy],
+    providers: [AuthService, JwtStrategy, GoogleStrategy],
     controllers: [AuthController],
     exports: [AuthService],
 })

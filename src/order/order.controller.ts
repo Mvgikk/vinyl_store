@@ -1,14 +1,8 @@
-import {
-    Controller,
-    Get,
-    Param,
-    Delete,
-} from '@nestjs/common';
+import { Controller, Get, Param, Delete } from '@nestjs/common';
 import { OrderService } from './order.service';
 @Controller('order')
 export class OrderController {
     constructor(private readonly orderService: OrderService) {}
-
 
     @Get()
     findAll() {
@@ -19,7 +13,6 @@ export class OrderController {
     findOne(@Param('id') id: string) {
         return this.orderService.findOne(+id);
     }
-
 
     @Delete(':id')
     remove(@Param('id') id: string) {

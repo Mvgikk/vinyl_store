@@ -20,6 +20,5 @@ import { SharedModule } from 'src/shared/shared.module';
             useClass: TypeOrmConfigService,
         }),
     ],
-
 })
 export class SeedModule {}

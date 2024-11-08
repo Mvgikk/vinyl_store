@@ -12,38 +12,38 @@ import { Review } from '../../review/entities/review.entity';
 @Entity()
 export class User {
     @PrimaryGeneratedColumn()
-        id: number;
+    id: number;
 
     @Column({ unique: true })
-        email: string;
+    email: string;
 
     @Column({ nullable: true })
-        password: string;
+    password: string;
 
     @Column()
-        firstName: string;
+    firstName: string;
 
     @Column()
-        lastName: string;
+    lastName: string;
 
     @Column({ type: 'date' })
-        birthdate: Date;
+    birthdate: Date;
 
     @Column({ nullable: true })
-        avatarUrl: string;
+    avatarUrl: string;
 
     @Column({ default: 'user' })
-        role: string;
+    role: string;
 
     @CreateDateColumn()
-        createdAt: Date;
+    createdAt: Date;
 
     @UpdateDateColumn()
-        updatedAt: Date;
+    updatedAt: Date;
 
     @OneToMany(() => Order, (order) => order.user)
-        orders: Order[];
+    orders: Order[];
 
     @OneToMany(() => Review, (review) => review.user)
-        reviews: Review[];
+    reviews: Review[];
 }

@@ -11,6 +11,7 @@ import { ReviewModule } from './review/review.module';
 import { OrderModule } from './order/order.module';
 import { AuthModule } from './auth/auth.module';
 import { SharedModule } from './shared/shared.module';
+import { SessionModule } from './session/session.module';
 
 @Module({
     imports: [
@@ -26,7 +27,8 @@ import { SharedModule } from './shared/shared.module';
         ReviewModule,
         OrderModule,
         AuthModule,
-        SharedModule
+        SharedModule,
+        SessionModule,
     ],
     controllers: [AppController],
     providers: [AppService],

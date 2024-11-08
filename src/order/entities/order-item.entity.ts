@@ -5,14 +5,14 @@ import { Order } from './order.entity';
 @Entity()
 export class OrderItem {
     @PrimaryGeneratedColumn()
-        id: number;
+    id: number;
 
     @Column('int')
-        quantity: number;
+    quantity: number;
 
     @ManyToOne(() => Vinyl, (vinyl) => vinyl.orderItems)
-        vinyl: Vinyl;
+    vinyl: Vinyl;
 
     @ManyToOne(() => Order, (order) => order.orderItems)
-        order: Order;
+    order: Order;
 }

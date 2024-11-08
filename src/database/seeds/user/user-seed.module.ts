@@ -6,7 +6,7 @@ import { HashingService } from 'src/shared/hashing/hashing.service';
 
 @Module({
     imports: [TypeOrmModule.forFeature([User])],
-    providers: [UserSeedService,HashingService],
+    providers: [UserSeedService, HashingService],
     exports: [UserSeedService],
 })
 export class UserSeedModule {}

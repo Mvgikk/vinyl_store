@@ -51,7 +51,7 @@ export default [
     },
   },
   {
-    files: ["src/**/*.dto.ts"],
+    files: ["src/**/*.dto.ts","src/**/*.entity.ts"],
     rules: {
       indent: "off",
     },
