@@ -50,6 +50,13 @@ export default [
       quotes: "off",
     },
   },
+  {
+    files: ["src/**/*.dto.ts"],
+    rules: {
+      indent: "off",
+    },
+  },
+  
   pluginJs.configs.recommended,
 
 ];

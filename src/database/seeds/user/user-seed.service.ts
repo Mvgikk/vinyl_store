@@ -2,19 +2,21 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { User } from '../../../user/entities/user.entity';
+import { HashingService } from 'src/shared/hashing/hashing.service';
 
 @Injectable()
 export class UserSeedService {
     constructor(
         @InjectRepository(User)
-        private readonly userRepository: Repository<User>
+        private readonly userRepository: Repository<User>,
+        private readonly hashingService: HashingService
     ) {}
 
     async run() {
         const users = [
             {
                 email: 'testuser1@example.com',
-                password: 'hashedpassword1',
+                password: 'password1',
                 firstName: 'John',
                 lastName: 'Doe',
                 birthdate: new Date('1980-05-12'),
@@ -22,7 +24,7 @@ export class UserSeedService {
             },
             {
                 email: 'testuser2@example.com',
-                password: 'hashedpassword2',
+                password: 'password2',
                 firstName: 'Jane',
                 lastName: 'Doe',
                 birthdate: new Date('1985-06-22'),
@@ -30,7 +32,7 @@ export class UserSeedService {
             },
             {
                 email: 'testuser3@example.com',
-                password: 'hashedpassword3',
+                password: 'password3',
                 firstName: 'Alice',
                 lastName: 'Smith',
                 birthdate: new Date('1992-09-15'),
@@ -38,7 +40,7 @@ export class UserSeedService {
             },
             {
                 email: 'testuser4@example.com',
-                password: 'hashedpassword4',
+                password: 'password4',
                 firstName: 'Bob',
                 lastName: 'Brown',
                 birthdate: new Date('1991-03-08'),
@@ -46,7 +48,7 @@ export class UserSeedService {
             },
             {
                 email: 'testuser5@example.com',
-                password: 'hashedpassword5',
+                password: 'password5',
                 firstName: 'Charlie',
                 lastName: 'Wilson',
                 birthdate: new Date('1994-11-25'),
@@ -54,7 +56,7 @@ export class UserSeedService {
             },
             {
                 email: 'testuser6@example.com',
-                password: 'hashedpassword6',
+                password: 'password6',
                 firstName: 'David',
                 lastName: 'Taylor',
                 birthdate: new Date('1989-02-14'),
@@ -62,7 +64,7 @@ export class UserSeedService {
             },
             {
                 email: 'testuser7@example.com',
-                password: 'hashedpassword7',
+                password: 'password7',
                 firstName: 'Eve',
                 lastName: 'Johnson',
                 birthdate: new Date('1996-07-19'),
@@ -70,7 +72,7 @@ export class UserSeedService {
             },
             {
                 email: 'testuser8@example.com',
-                password: 'hashedpassword8',
+                password: 'password8',
                 firstName: 'Frank',
                 lastName: 'Lee',
                 birthdate: new Date('1993-08-30'),
@@ -78,7 +80,7 @@ export class UserSeedService {
             },
             {
                 email: 'testuser9@example.com',
-                password: 'hashedpassword9',
+                password: 'password9',
                 firstName: 'Grace',
                 lastName: 'Martin',
                 birthdate: new Date('1988-12-03'),
@@ -86,13 +88,16 @@ export class UserSeedService {
             },
             {
                 email: 'testuser10@example.com',
-                password: 'hashedpassword10',
+                password: 'password10',
                 firstName: 'Henry',
                 lastName: 'Lewis',
                 birthdate: new Date('1995-04-17'),
                 role: 'user',
             },
         ];
+        for (const user of users) {
+            user.password = this.hashingService.hashPassword(user.password);
+        }
 
         await this.userRepository.save(users);
         console.log('Users seeded successfully!');

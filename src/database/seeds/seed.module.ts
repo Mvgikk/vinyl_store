@@ -5,9 +5,11 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { TypeOrmConfigService } from '../typeorm-config.service';
 import { ConfigModule } from '@nestjs/config';
 import development from 'config/development';
+import { SharedModule } from 'src/shared/shared.module';
 
 @Module({
     imports: [
+        SharedModule,
         UserSeedModule,
         VinylSeedModule,
         ConfigModule.forRoot({
@@ -18,5 +20,6 @@ import development from 'config/development';
             useClass: TypeOrmConfigService,
         }),
     ],
+
 })
 export class SeedModule {}

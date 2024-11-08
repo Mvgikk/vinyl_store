@@ -12,23 +12,23 @@ import { OrderItem } from './order-item.entity';
 @Entity()
 export class Order {
     @PrimaryGeneratedColumn()
-    id: number;
+        id: number;
 
     @Column('decimal')
-    totalPrice: number;
+        totalPrice: number;
 
     @Column()
-    status: string;
+        status: string;
 
     @CreateDateColumn()
-    createdAt: Date;
+        createdAt: Date;
 
     @ManyToOne(() => User, (user) => user.orders, { onDelete: 'CASCADE' })
-    user: User;
+        user: User;
 
     @OneToMany(() => OrderItem, (orderItem) => orderItem.order, {
         cascade: true,
         onDelete: 'CASCADE',
     })
-    orderItems: OrderItem[];
+        orderItems: OrderItem[];
 }

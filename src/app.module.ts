@@ -9,6 +9,8 @@ import { TypeOrmConfigService } from './database/typeorm-config.service';
 import { VinylModule } from './vinyl/vinyl.module';
 import { ReviewModule } from './review/review.module';
 import { OrderModule } from './order/order.module';
+import { AuthModule } from './auth/auth.module';
+import { SharedModule } from './shared/shared.module';
 
 @Module({
     imports: [
@@ -23,6 +25,8 @@ import { OrderModule } from './order/order.module';
         VinylModule,
         ReviewModule,
         OrderModule,
+        AuthModule,
+        SharedModule
     ],
     controllers: [AppController],
     providers: [AppService],
