@@ -19,10 +19,15 @@ import { Role } from 'src/shared/enums/roles.enum';
 import { UpdateVinylDto } from './dto/update-vinyl.dto';
 import { PaginationOptionsDto } from 'src/shared/dto/pagination-options.dto';
 import { VinylQueryOptionsDto } from './dto/vinyl-query-options.dto';
+import { ReviewService } from 'src/review/review.service';
+import { ResponseReviewDto } from 'src/review/dto/response-review.dto';
 
 @Controller('vinyl')
 export class VinylController {
-    constructor(private readonly vinylService: VinylService) {}
+    constructor(
+        private readonly vinylService: VinylService,
+        private readonly reviewService: ReviewService
+    ) {}
 
     @Get()
     async findAll(
@@ -61,5 +66,21 @@ export class VinylController {
         @Query() queryOptions: VinylQueryOptionsDto
     ): Promise<{ data: Vinyl[]; total: number; page: number; limit: number }> {
         return await this.vinylService.searchVinyls(queryOptions);
+    }
+
+    @Get(':vinylId/reviews')
+    async getReviewsForVinyl(
+        @Param('vinylId') vinylId: number,
+        @Query() paginationOptions: PaginationOptionsDto
+    ): Promise<{
+        data: ResponseReviewDto[];
+        total: number;
+        page: number;
+        limit: number;
+    }> {
+        return this.reviewService.getReviewsForVinyl(
+            vinylId,
+            paginationOptions
+        );
     }
 }

@@ -35,7 +35,7 @@ export class Vinyl {
     @UpdateDateColumn()
     updatedAt: Date;
 
-    @OneToMany(() => Review, (review) => review.vinyl)
+    @OneToMany(() => Review, (review) => review.vinyl, { cascade: true })
     reviews: Review[];
 
     @OneToMany(() => OrderItem, (orderItem) => orderItem.vinyl)
