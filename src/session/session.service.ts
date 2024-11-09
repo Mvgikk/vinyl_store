@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { LessThan, Repository } from 'typeorm';
 import { Session } from './session.entity';
 
 @Injectable()
@@ -29,5 +29,15 @@ export class SessionService {
             where: { id: sessionId },
         });
         return !!session;
+    }
+
+    private readonly sessionExpiryTime = 60 * 60 * 1000;
+
+    async deleteExpiredSessions(): Promise<number> {
+        const expiryDate = new Date(Date.now() - this.sessionExpiryTime);
+        const deleteResult = await this.sessionRepository.delete({
+            createdAt: LessThan(expiryDate),
+        });
+        return deleteResult.affected || 0;
     }
 }
