@@ -7,6 +7,8 @@ import { JwtPayloadType } from './types/jwt-payload.type';
 import { HashingService } from 'src/shared/hashing/hashing.service';
 import { User } from 'src/user/entities/user.entity';
 import { SessionService } from 'src/session/session.service';
+import { UserProfileResponseDto } from 'src/user/dto/user-profile-response.dto';
+import { plainToInstance } from 'class-transformer';
 
 @Injectable()
 export class AuthService {
@@ -54,12 +56,15 @@ export class AuthService {
         return { access_token: token };
     }
 
-    async register(registerDto: RegisterDto) {
-        const hashedPassword = this.hashingService.hashPassword(
+    async register(registerDto: RegisterDto): Promise<UserProfileResponseDto> {
+        const hashedPassword = await this.hashingService.hashPassword(
             registerDto.password
         );
         const userToCreate = { ...registerDto, password: hashedPassword };
-        return await this.userService.createUser(userToCreate);
+
+        const newUser = await this.userService.createUser(userToCreate);
+
+        return plainToInstance(UserProfileResponseDto, newUser);
     }
 
     async logout(sessionId: number) {
