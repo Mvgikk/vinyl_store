@@ -1,7 +1,9 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Vinyl } from './entities/vinyl.entity';
+import { CreateVinylDto } from './dto/create-vinyl.dto';
+import { UpdateVinylDto } from './dto/update-vinyl.dto';
 
 @Injectable()
 export class VinylService {
@@ -26,5 +28,32 @@ export class VinylService {
             page,
             limit,
         };
+    }
+
+    async createVinyl(createVinylDto: CreateVinylDto): Promise<Vinyl> {
+        const vinyl = this.vinylRepository.create(createVinylDto);
+        return await this.vinylRepository.save(vinyl);
+    }
+
+    async findOneById(id: number): Promise<Vinyl> {
+        const vinyl = await this.vinylRepository.findOne({ where: { id } });
+        if (!vinyl) {
+            throw new NotFoundException(`Vinyl record with ID ${id} not found`);
+        }
+        return vinyl;
+    }
+
+    async updateVinyl(
+        id: number,
+        updateVinylDto: UpdateVinylDto
+    ): Promise<Vinyl> {
+        const vinyl = await this.findOneById(id);
+        Object.assign(vinyl, updateVinylDto);
+        return await this.vinylRepository.save(vinyl);
+    }
+
+    async deleteVinyl(id: number): Promise<void> {
+        const vinyl = await this.findOneById(id);
+        await this.vinylRepository.remove(vinyl);
     }
 }

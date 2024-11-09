@@ -8,8 +8,6 @@ import {
     UseInterceptors,
     ClassSerializerInterceptor,
     Delete,
-    HttpCode,
-    HttpStatus,
 } from '@nestjs/common';
 import { UserService } from './user.service';
 import { AuthGuard } from '@nestjs/passport';
@@ -39,9 +37,9 @@ export class UserController {
 
     @Delete('profile')
     @UseGuards(AuthGuard('jwt'))
-    @HttpCode(HttpStatus.NO_CONTENT)
-    async deleteProfile(@Req() req): Promise<void> {
+    async deleteProfile(@Req() req) {
         const userId = req.user.userId;
         await this.userService.removeUser(userId);
+        return { message: 'User deleted successfully' };
     }
 }

@@ -1,4 +1,23 @@
-import { PartialType } from '@nestjs/mapped-types';
-import { CreateVinylDto } from './create-vinyl.dto';
+import { IsString, IsOptional, IsNumber, IsUrl } from 'class-validator';
 
-export class UpdateVinylDto extends PartialType(CreateVinylDto) {}
+export class UpdateVinylDto {
+    @IsString()
+    @IsOptional()
+    author?: string;
+
+    @IsString()
+    @IsOptional()
+    name?: string;
+
+    @IsString()
+    @IsOptional()
+    description?: string;
+
+    @IsUrl()
+    @IsOptional()
+    image?: string;
+
+    @IsNumber()
+    @IsOptional()
+    price?: number;
+}

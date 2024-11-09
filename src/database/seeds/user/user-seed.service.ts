@@ -3,13 +3,15 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { User } from '../../../user/entities/user.entity';
 import { HashingService } from 'src/shared/hashing/hashing.service';
+import { ConfigService } from '@nestjs/config';
 
 @Injectable()
 export class UserSeedService {
     constructor(
         @InjectRepository(User)
         private readonly userRepository: Repository<User>,
-        private readonly hashingService: HashingService
+        private readonly hashingService: HashingService,
+        private readonly configService: ConfigService
     ) {}
 
     async run() {
@@ -101,6 +103,24 @@ export class UserSeedService {
 
         await this.userRepository.save(users);
         console.log('Users seeded successfully!');
+    }
+
+    async createAdmin() {
+        const adminEmail = this.configService.get<string>('admin.email');
+        const adminPassword = this.configService.get<string>('admin.password');
+        const hashedPassword =
+            await this.hashingService.hashPassword(adminPassword);
+
+        const adminUser = {
+            email: adminEmail,
+            password: hashedPassword,
+            firstName: 'Tomasz',
+            lastName: 'Bartosik',
+            role: 'admin',
+            birthdate: '2000-08-06',
+            avatarUrl: null,
+        };
+        await this.userRepository.save(adminUser);
     }
 
     async clear() {

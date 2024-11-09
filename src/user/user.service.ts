@@ -52,13 +52,7 @@ export class UserService {
         userId: number,
         updateProfileDto: UpdateProfileDto
     ): Promise<UserProfileResponseDto> {
-        const user = await this.userRepository.findOne({
-            where: { id: userId },
-        });
-        if (!user) {
-            throw new NotFoundException('User not found');
-        }
-
+        const user = await this.findOneById(userId);
         Object.assign(user, updateProfileDto);
         const updatedUser = await this.userRepository.save(user);
 
@@ -73,16 +67,8 @@ export class UserService {
         await this.userRepository.remove(user);
     }
 
-    async getProfile(userId: number): Promise<User> {
-        return this.userRepository.findOne({
-            where: { id: userId },
-            select: [
-                'email',
-                'firstName',
-                'lastName',
-                'birthdate',
-                'avatarUrl',
-            ],
-        });
+    async getProfile(userId: number): Promise<UserProfileResponseDto> {
+        const user = await this.findOneById(userId);
+        return plainToInstance(UserProfileResponseDto, user);
     }
 }

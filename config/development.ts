@@ -13,6 +13,10 @@ export default () => ({
         clientId: process.env.GOOGLE_CLIENT_ID,
         clientSecret: process.env.GOOGLE_CLIENT_SECRET,
         callbackUrl: process.env.GOOGLE_CALLBACK_URL,
+    },
+    admin: {
+        email: process.env.ADMIN_EMAIL,
+        password: process.env.ADMIN_PASSWORD,
     }
 });
   

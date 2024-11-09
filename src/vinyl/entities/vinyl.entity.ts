@@ -26,6 +26,9 @@ export class Vinyl {
     @Column('decimal')
     price: number;
 
+    @Column({ nullable: true })
+    image: string;
+
     @CreateDateColumn()
     createdAt: Date;
 

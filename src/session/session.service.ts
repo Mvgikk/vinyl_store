@@ -10,6 +10,8 @@ export class SessionService {
         private readonly sessionRepository: Repository<Session>
     ) {}
 
+    private readonly sessionExpiryTime = 60 * 60 * 1000;
+
     async initializeSession(userId: number): Promise<Session> {
         const session = this.sessionRepository.create({ userId, token: '' });
         return await this.sessionRepository.save(session);
@@ -30,8 +32,6 @@ export class SessionService {
         });
         return !!session;
     }
-
-    private readonly sessionExpiryTime = 60 * 60 * 1000;
 
     async deleteExpiredSessions(): Promise<number> {
         const expiryDate = new Date(Date.now() - this.sessionExpiryTime);
