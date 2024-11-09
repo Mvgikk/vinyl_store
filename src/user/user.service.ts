@@ -47,4 +47,17 @@ export class UserService {
         const user = await this.findOneById(id);
         await this.userRepository.remove(user);
     }
+
+    async getProfile(userId: number): Promise<User> {
+        return this.userRepository.findOne({
+            where: { id: userId },
+            select: [
+                'email',
+                'firstName',
+                'lastName',
+                'birthdate',
+                'avatarUrl',
+            ],
+        });
+    }
 }

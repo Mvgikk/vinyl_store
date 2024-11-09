@@ -1,24 +1,30 @@
 import { Injectable } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
+import { Vinyl } from './entities/vinyl.entity';
 
 @Injectable()
 export class VinylService {
-    create() {
-        return 'This action adds a new vinyl';
-    }
+    constructor(
+        @InjectRepository(Vinyl)
+        private readonly vinylRepository: Repository<Vinyl>
+    ) {}
 
-    findAll() {
-        return 'This action returns all vinyl';
-    }
+    async findAll(
+        page: number = 1,
+        limit: number = 10
+    ): Promise<{ data: Vinyl[]; total: number; page: number; limit: number }> {
+        const [data, total] = await this.vinylRepository.findAndCount({
+            select: ['id', 'name', 'author', 'description', 'price'],
+            skip: (page - 1) * limit,
+            take: limit,
+        });
 
-    findOne(id: number) {
-        return `This action returns a #${id} vinyl`;
-    }
-
-    update(id: number) {
-        return `This action updates a #${id} vinyl`;
-    }
-
-    remove(id: number) {
-        return `This action removes a #${id} vinyl`;
+        return {
+            data,
+            total,
+            page,
+            limit,
+        };
     }
 }

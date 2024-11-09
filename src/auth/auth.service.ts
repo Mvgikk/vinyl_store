@@ -37,15 +37,19 @@ export class AuthService {
         if (!user) {
             throw new Error('Invalid credentials');
         }
+
+        const session = await this.sessionService.initializeSession(user.id);
+
         const payload: JwtPayloadType = {
             id: user.id,
             email: user.email,
             role: user.role,
+            sessionId: session.id,
             iat: Math.floor(Date.now() / 1000),
             exp: Math.floor(Date.now() / 1000) + 3600,
         };
         const token = this.jwtService.sign(payload);
-        await this.sessionService.createSession(user.id, token);
+        await this.sessionService.finalizeSession(session, token);
 
         return { access_token: token };
     }
@@ -58,22 +62,25 @@ export class AuthService {
         return await this.userService.createUser(userToCreate);
     }
 
-    async logout(token: string) {
-        await this.sessionService.deleteSession(token);
+    async logout(sessionId: number) {
+        await this.sessionService.deleteSession(sessionId);
         return { message: 'Successfully logged out' };
     }
 
     async loginWithGoogle(user: User) {
+        const session = await this.sessionService.initializeSession(user.id);
+
         const payload: JwtPayloadType = {
             id: user.id,
             email: user.email,
             role: user.role,
+            sessionId: session.id,
             iat: Math.floor(Date.now() / 1000),
             exp: Math.floor(Date.now() / 1000) + 3600,
         };
         const token = this.jwtService.sign(payload);
 
-        await this.sessionService.createSession(user.id, token);
+        await this.sessionService.finalizeSession(session, token);
 
         return { access_token: token };
     }

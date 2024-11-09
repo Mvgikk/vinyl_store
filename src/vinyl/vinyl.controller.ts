@@ -1,22 +1,17 @@
-import { Controller, Get, Param, Delete } from '@nestjs/common';
+import { Controller, Get, Query } from '@nestjs/common';
 import { VinylService } from './vinyl.service';
+import { Vinyl } from './entities/vinyl.entity';
 
 @Controller('vinyl')
 export class VinylController {
     constructor(private readonly vinylService: VinylService) {}
 
     @Get()
-    findAll() {
-        return this.vinylService.findAll();
-    }
-
-    @Get(':id')
-    findOne(@Param('id') id: string) {
-        return this.vinylService.findOne(+id);
-    }
-
-    @Delete(':id')
-    remove(@Param('id') id: string) {
-        return this.vinylService.remove(+id);
+    async findAll(
+        @Query('page') page: number = 1,
+        @Query('limit') limit: number = 10
+    ): Promise<{ data: Vinyl[]; total: number; page: number; limit: number }> {
+        limit = Math.min(limit, 100);
+        return this.vinylService.findAll(page, limit);
     }
 }

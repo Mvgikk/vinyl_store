@@ -1,12 +1,4 @@
-import {
-    Controller,
-    Post,
-    Body,
-    UseGuards,
-    Get,
-    Req,
-    Headers,
-} from '@nestjs/common';
+import { Controller, Post, Body, UseGuards, Get, Req } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { LoginDto } from './dto/login.dto';
 import { RegisterDto } from './dto/register.dto';
@@ -42,8 +34,9 @@ export class AuthController {
     }
 
     @Post('logout')
-    async logout(@Headers('Authorization') authHeader: string) {
-        const token = authHeader.replace('Bearer ', '');
-        return this.authService.logout(token);
+    @UseGuards(AuthGuard('jwt'))
+    async logout(@Req() req) {
+        const sessionId = req.user.sessionId;
+        return await this.authService.logout(sessionId);
     }
 }

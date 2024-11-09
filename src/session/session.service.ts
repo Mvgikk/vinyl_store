@@ -1,4 +1,4 @@
-import { Injectable, UnauthorizedException } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Session } from './session.entity';
@@ -10,21 +10,24 @@ export class SessionService {
         private readonly sessionRepository: Repository<Session>
     ) {}
 
-    async createSession(userId: number, token: string) {
-        const session = this.sessionRepository.create({ userId, token });
+    async initializeSession(userId: number): Promise<Session> {
+        const session = this.sessionRepository.create({ userId, token: '' });
         return await this.sessionRepository.save(session);
     }
 
-    async deleteSession(token: string) {
-        await this.sessionRepository.delete({ token });
+    async finalizeSession(session: Session, token: string): Promise<Session> {
+        session.token = token;
+        return await this.sessionRepository.save(session);
     }
 
-    async validateSession(token: string): Promise<void> {
+    async deleteSession(sessionId: number) {
+        await this.sessionRepository.delete({ id: sessionId });
+    }
+
+    async validateSession(sessionId: number): Promise<boolean> {
         const session = await this.sessionRepository.findOne({
-            where: { token },
+            where: { id: sessionId },
         });
-        if (!session) {
-            throw new UnauthorizedException('Invalid or expired session');
-        }
+        return !!session;
     }
 }
