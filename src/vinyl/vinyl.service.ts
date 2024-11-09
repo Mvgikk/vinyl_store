@@ -1,9 +1,11 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { FindOptionsWhere, Like, Repository } from 'typeorm';
 import { Vinyl } from './entities/vinyl.entity';
 import { CreateVinylDto } from './dto/create-vinyl.dto';
 import { UpdateVinylDto } from './dto/update-vinyl.dto';
+import { VinylQueryOptionsDto } from './dto/vinyl-query-options.dto';
+import { PaginationOptionsDto } from 'src/shared/dto/pagination-options.dto';
 
 @Injectable()
 export class VinylService {
@@ -12,10 +14,17 @@ export class VinylService {
         private readonly vinylRepository: Repository<Vinyl>
     ) {}
 
-    async findAll(
-        page: number = 1,
-        limit: number = 10
+    async findAll(): Promise<Vinyl[]> {
+        return await this.vinylRepository.find({
+            select: ['id', 'name', 'author', 'description', 'price'],
+        });
+    }
+
+    async findAllWithPagination(
+        paginationOptions: PaginationOptionsDto
     ): Promise<{ data: Vinyl[]; total: number; page: number; limit: number }> {
+        const { page, limit } = paginationOptions;
+
         const [data, total] = await this.vinylRepository.findAndCount({
             select: ['id', 'name', 'author', 'description', 'price'],
             skip: (page - 1) * limit,
@@ -55,5 +64,31 @@ export class VinylService {
     async deleteVinyl(id: number): Promise<void> {
         const vinyl = await this.findOneById(id);
         await this.vinylRepository.remove(vinyl);
+    }
+
+    async searchVinyls(
+        queryOptions: VinylQueryOptionsDto
+    ): Promise<{ data: Vinyl[]; total: number; page: number; limit: number }> {
+        const { name, author, page, limit } = queryOptions;
+        const where: FindOptionsWhere<Vinyl> = {};
+
+        if (name) where.name = Like(`%${name}%`);
+        if (author) where.author = Like(`%${author}%`);
+
+        const orderOptions = queryOptions.getSortingOptions();
+
+        const [data, total] = await this.vinylRepository.findAndCount({
+            where,
+            order: orderOptions,
+            skip: (page - 1) * limit,
+            take: limit,
+        });
+
+        return {
+            data,
+            total,
+            page,
+            limit,
+        };
     }
 }

@@ -7,12 +7,12 @@ import { AllExceptionsFilter } from './shared/filters/all-exceptions.filter';
 async function bootstrap() {
     const app = await NestFactory.create(AppModule);
     const configService = app.get(ConfigService);
-    app.useGlobalPipes(new ValidationPipe());
     const port = configService.get<number>('port');
     app.useGlobalInterceptors(
         new ClassSerializerInterceptor(app.get(Reflector))
     );
     app.useGlobalFilters(new AllExceptionsFilter());
+    app.useGlobalPipes(new ValidationPipe({ transform: true }));
 
     await app.listen(port);
 }

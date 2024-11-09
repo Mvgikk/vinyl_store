@@ -17,6 +17,8 @@ import { RolesGuard } from 'src/shared/guards/roles.guard';
 import { Roles } from 'src/shared/decorators/roles.decorator';
 import { Role } from 'src/shared/enums/roles.enum';
 import { UpdateVinylDto } from './dto/update-vinyl.dto';
+import { PaginationOptionsDto } from 'src/shared/dto/pagination-options.dto';
+import { VinylQueryOptionsDto } from './dto/vinyl-query-options.dto';
 
 @Controller('vinyl')
 export class VinylController {
@@ -24,11 +26,9 @@ export class VinylController {
 
     @Get()
     async findAll(
-        @Query('page') page: number = 1,
-        @Query('limit') limit: number = 10
+        @Query() paginationOptions: PaginationOptionsDto
     ): Promise<{ data: Vinyl[]; total: number; page: number; limit: number }> {
-        limit = Math.min(limit, 100);
-        return this.vinylService.findAll(page, limit);
+        return this.vinylService.findAllWithPagination(paginationOptions);
     }
 
     @Post()
@@ -54,5 +54,12 @@ export class VinylController {
     async remove(@Param('id') id: number) {
         await this.vinylService.deleteVinyl(id);
         return { message: 'Vinyl record deleted successfully' };
+    }
+
+    @Get('search')
+    async searchVinyls(
+        @Query() queryOptions: VinylQueryOptionsDto
+    ): Promise<{ data: Vinyl[]; total: number; page: number; limit: number }> {
+        return await this.vinylService.searchVinyls(queryOptions);
     }
 }
