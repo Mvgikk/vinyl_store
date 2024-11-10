@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { MiddlewareConsumer, Module } from '@nestjs/common';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { ConfigModule } from '@nestjs/config';
@@ -12,9 +12,15 @@ import { OrderModule } from './order/order.module';
 import { AuthModule } from './auth/auth.module';
 import { SharedModule } from './shared/shared.module';
 import { SessionModule } from './session/session.module';
+import { RequestLoggerMiddleware } from './middleware/request-logger.middleware';
+import { WinstonModule } from 'nest-winston';
+import { winstonConfig } from './logger/winston-logger.config';
+import { AdminModule } from './admin/admin.module';
+import { ScheduleModule } from '@nestjs/schedule';
 
 @Module({
     imports: [
+        WinstonModule.forRoot(winstonConfig),
         ConfigModule.forRoot({
             isGlobal: true,
             load: [development],
@@ -29,8 +35,14 @@ import { SessionModule } from './session/session.module';
         AuthModule,
         SharedModule,
         SessionModule,
+        AdminModule,
+        ScheduleModule.forRoot(),
     ],
     controllers: [AppController],
     providers: [AppService],
 })
-export class AppModule {}
+export class AppModule {
+    configure(consumer: MiddlewareConsumer) {
+        consumer.apply(RequestLoggerMiddleware).forRoutes('*');
+    }
+}

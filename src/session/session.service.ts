@@ -1,36 +1,83 @@
-import { Injectable } from '@nestjs/common';
+import { Inject, Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { LessThan, Repository } from 'typeorm';
 import { Session } from './session.entity';
+import { WINSTON_MODULE_PROVIDER } from 'nest-winston';
+import { Logger } from 'winston';
 
 @Injectable()
 export class SessionService {
     constructor(
         @InjectRepository(Session)
-        private readonly sessionRepository: Repository<Session>
+        private readonly sessionRepository: Repository<Session>,
+        @Inject(WINSTON_MODULE_PROVIDER) private readonly logger: Logger
     ) {}
 
     private readonly sessionExpiryTime = 60 * 60 * 1000;
 
     async initializeSession(userId: number): Promise<Session> {
         const session = this.sessionRepository.create({ userId, token: '' });
-        return await this.sessionRepository.save(session);
+        const savedSession = await this.sessionRepository.save(session);
+        this.logger.info(
+            `Initialized session with ID: ${savedSession.id} for user ID: ${userId}`,
+            {
+                action: 'initialize',
+                userId,
+                sessionId: savedSession.id,
+            }
+        );
+        return savedSession;
     }
 
     async finalizeSession(session: Session, token: string): Promise<Session> {
         session.token = token;
-        return await this.sessionRepository.save(session);
+        const finalizedSession = await this.sessionRepository.save(session);
+        this.logger.info(
+            `Finished initializing session with ID: ${finalizedSession.id}`,
+            {
+                action: 'finalize',
+                sessionId: finalizedSession.id,
+                token,
+            }
+        );
+        return finalizedSession;
     }
 
     async deleteSession(sessionId: number) {
         await this.sessionRepository.delete({ id: sessionId });
+        this.logger.info(`Deleted session with ID: ${sessionId}`, {
+            action: 'delete',
+            sessionId,
+        });
     }
 
-    async validateSession(sessionId: number): Promise<boolean> {
+    async findOneById(sessionId: number): Promise<Session> {
         const session = await this.sessionRepository.findOne({
             where: { id: sessionId },
         });
-        return !!session;
+        if (!session) {
+            throw new NotFoundException(
+                `Session with ID ${sessionId} not found`
+            );
+        }
+        this.logger.info(`Found session with ID: ${sessionId}`, {
+            action: 'findOneById',
+            sessionId,
+        });
+        return session;
+    }
+    async validateSession(sessionId: number): Promise<boolean> {
+        const session = await this.findOneById(sessionId);
+        const isValid = !!session;
+        this.logger.info(
+            `Validated session with ID: ${sessionId} - Valid: ${isValid}`,
+            {
+                action: 'validate',
+                sessionId,
+                isValid,
+            }
+        );
+        return isValid;
     }
 
     async deleteExpiredSessions(): Promise<number> {

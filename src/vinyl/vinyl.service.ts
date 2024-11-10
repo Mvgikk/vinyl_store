@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { Inject, Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { FindOptionsWhere, Like, Repository } from 'typeorm';
 import { Vinyl } from './entities/vinyl.entity';
@@ -9,13 +9,15 @@ import { PaginationOptionsDto } from 'src/shared/dto/pagination-options.dto';
 import { plainToInstance } from 'class-transformer';
 import { ExtendedVinylResponseDto } from './dto/extended-vinyl-response.dto';
 import { ReviewHelperService } from 'src/review/review-helper.service';
-
+import { WINSTON_MODULE_PROVIDER } from 'nest-winston';
+import { Logger } from 'winston';
 @Injectable()
 export class VinylService {
     constructor(
         @InjectRepository(Vinyl)
         private readonly vinylRepository: Repository<Vinyl>,
-        private readonly reviewHelperService: ReviewHelperService
+        private readonly reviewHelperService: ReviewHelperService,
+        @Inject(WINSTON_MODULE_PROVIDER) private readonly logger: Logger
     ) {}
 
     async findAll(): Promise<Vinyl[]> {
@@ -89,7 +91,12 @@ export class VinylService {
 
     async createVinyl(createVinylDto: CreateVinylDto): Promise<Vinyl> {
         const vinyl = this.vinylRepository.create(createVinylDto);
-        return await this.vinylRepository.save(vinyl);
+        const savedVinyl = await this.vinylRepository.save(vinyl);
+        this.logger.info(`Created vinyl with ID: ${savedVinyl.id}`, {
+            action: 'create',
+            id: savedVinyl.id,
+        });
+        return savedVinyl;
     }
 
     async findOneById(id: number): Promise<Vinyl> {
@@ -97,6 +104,10 @@ export class VinylService {
         if (!vinyl) {
             throw new NotFoundException(`Vinyl record with ID ${id} not found`);
         }
+        this.logger.info(`Fetched vinyl with ID: ${id}`, {
+            action: 'find',
+            id,
+        });
         return vinyl;
     }
 
@@ -106,12 +117,21 @@ export class VinylService {
     ): Promise<Vinyl> {
         const vinyl = await this.findOneById(id);
         Object.assign(vinyl, updateVinylDto);
-        return await this.vinylRepository.save(vinyl);
+        const updatedVinyl = await this.vinylRepository.save(vinyl);
+        this.logger.info(`Updated vinyl with ID: ${updatedVinyl.id}`, {
+            action: 'update',
+            id: updatedVinyl.id,
+        });
+        return updatedVinyl;
     }
 
     async deleteVinyl(id: number): Promise<void> {
         const vinyl = await this.findOneById(id);
         await this.vinylRepository.remove(vinyl);
+        this.logger.info(`Deleted vinyl with ID: ${id}`, {
+            action: 'delete',
+            id,
+        });
     }
 
     async searchVinyls(

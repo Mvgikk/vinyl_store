@@ -1,4 +1,4 @@
-import { Injectable, UnauthorizedException } from '@nestjs/common';
+import { Inject, Injectable, UnauthorizedException } from '@nestjs/common';
 import { UserService } from '../user/user.service';
 import { JwtService } from '@nestjs/jwt';
 import { LoginDto } from './dto/login.dto';
@@ -9,6 +9,8 @@ import { User } from 'src/user/entities/user.entity';
 import { SessionService } from 'src/session/session.service';
 import { UserProfileResponseDto } from 'src/user/dto/user-profile-response.dto';
 import { plainToInstance } from 'class-transformer';
+import { WINSTON_MODULE_PROVIDER } from 'nest-winston';
+import { Logger } from 'winston';
 
 @Injectable()
 export class AuthService {
@@ -16,7 +18,8 @@ export class AuthService {
         private readonly userService: UserService,
         private readonly jwtService: JwtService,
         private readonly hashingService: HashingService,
-        private readonly sessionService: SessionService
+        private readonly sessionService: SessionService,
+        @Inject(WINSTON_MODULE_PROVIDER) private readonly logger: Logger
     ) {}
 
     async validateUser(email: string, password: string): Promise<User | null> {
@@ -25,13 +28,26 @@ export class AuthService {
             user &&
             (await this.hashingService.comparePassword(password, user.password))
         ) {
+            this.logger.info(`Validated user credentials for email: ${email}`, {
+                action: 'validateUser',
+                email,
+            });
             return user;
         }
+        this.logger.warn(`Invalid credentials for email: ${email}`, {
+            action: 'validateUser',
+            email,
+        });
         return null;
     }
 
     async validateUserWithGoogle(email: string): Promise<User | null> {
-        return await this.userService.findOneByEmail(email);
+        const user = await this.userService.findOneByEmail(email);
+        this.logger.info(`Validated Google login for email: ${email}`, {
+            action: 'validateUserWithGoogle',
+            email,
+        });
+        return user;
     }
 
     async login(loginDto: LoginDto) {
@@ -52,6 +68,11 @@ export class AuthService {
         };
         const token = this.jwtService.sign(payload);
         await this.sessionService.finalizeSession(session, token);
+        this.logger.info(`User with ID ${user.id} logged in`, {
+            action: 'login',
+            userId: user.id,
+            sessionId: session.id,
+        });
 
         return { access_token: token };
     }
@@ -63,12 +84,21 @@ export class AuthService {
         const userToCreate = { ...registerDto, password: hashedPassword };
 
         const newUser = await this.userService.createUser(userToCreate);
+        this.logger.info(`New user registered with ID: ${newUser.id}`, {
+            action: 'register',
+            userId: newUser.id,
+        });
 
         return plainToInstance(UserProfileResponseDto, newUser);
     }
 
     async logout(sessionId: number) {
         await this.sessionService.deleteSession(sessionId);
+        this.logger.info(`Session with ID ${sessionId} logged out`, {
+            action: 'logout',
+            sessionId,
+        });
+
         return { message: 'Successfully logged out' };
     }
 
@@ -86,6 +116,11 @@ export class AuthService {
         const token = this.jwtService.sign(payload);
 
         await this.sessionService.finalizeSession(session, token);
+        this.logger.info(`User with ID ${user.id} logged in via Google`, {
+            action: 'loginWithGoogle',
+            userId: user.id,
+            sessionId: session.id,
+        });
 
         return { access_token: token };
     }

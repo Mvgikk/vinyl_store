@@ -51,6 +51,7 @@ export class AuthController {
 
     @Post('logout')
     @UseGuards(AuthGuard('jwt'))
+    @HttpCode(HttpStatus.OK)
     async logout(@Req() req) {
         const sessionId = req.user.sessionId;
         return await this.authService.logout(sessionId);
