@@ -21,6 +21,7 @@ import { PaginationOptionsDto } from 'src/shared/dto/pagination-options.dto';
 import { VinylQueryOptionsDto } from './dto/vinyl-query-options.dto';
 import { ReviewService } from 'src/review/review.service';
 import { ResponseReviewDto } from 'src/review/dto/response-review.dto';
+import { ExtendedVinylResponseDto } from './dto/extended-vinyl-response.dto';
 
 @Controller('vinyl')
 export class VinylController {
@@ -30,10 +31,15 @@ export class VinylController {
     ) {}
 
     @Get()
-    async findAll(
-        @Query() paginationOptions: PaginationOptionsDto
-    ): Promise<{ data: Vinyl[]; total: number; page: number; limit: number }> {
-        return this.vinylService.findAllWithPagination(paginationOptions);
+    async findAll(@Query() paginationOptions: PaginationOptionsDto): Promise<{
+        data: ExtendedVinylResponseDto[];
+        total: number;
+        page: number;
+        limit: number;
+    }> {
+        return this.vinylService.findAllWithPaginationAndFirstReview(
+            paginationOptions
+        );
     }
 
     @Post()

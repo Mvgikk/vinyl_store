@@ -5,6 +5,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { Review } from './entities/review.entity';
 import { VinylModule } from 'src/vinyl/vinyl.module';
 import { UserModule } from 'src/user/user.module';
+import { ReviewHelperService } from './review-helper.service';
 
 @Module({
     imports: [
@@ -13,7 +14,7 @@ import { UserModule } from 'src/user/user.module';
         UserModule,
     ],
     controllers: [ReviewController],
-    providers: [ReviewService],
-    exports: [ReviewService],
+    providers: [ReviewService, ReviewHelperService],
+    exports: [ReviewService, ReviewHelperService],
 })
 export class ReviewModule {}

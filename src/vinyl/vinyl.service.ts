@@ -6,12 +6,16 @@ import { CreateVinylDto } from './dto/create-vinyl.dto';
 import { UpdateVinylDto } from './dto/update-vinyl.dto';
 import { VinylQueryOptionsDto } from './dto/vinyl-query-options.dto';
 import { PaginationOptionsDto } from 'src/shared/dto/pagination-options.dto';
+import { plainToInstance } from 'class-transformer';
+import { ExtendedVinylResponseDto } from './dto/extended-vinyl-response.dto';
+import { ReviewHelperService } from 'src/review/review-helper.service';
 
 @Injectable()
 export class VinylService {
     constructor(
         @InjectRepository(Vinyl)
-        private readonly vinylRepository: Repository<Vinyl>
+        private readonly vinylRepository: Repository<Vinyl>,
+        private readonly reviewHelperService: ReviewHelperService
     ) {}
 
     async findAll(): Promise<Vinyl[]> {
@@ -29,6 +33,50 @@ export class VinylService {
             select: ['id', 'name', 'author', 'description', 'price'],
             skip: (page - 1) * limit,
             take: limit,
+        });
+
+        return {
+            data,
+            total,
+            page,
+            limit,
+        };
+    }
+
+    async findAllWithPaginationAndFirstReview(
+        paginationOptions: PaginationOptionsDto
+    ): Promise<{
+        data: ExtendedVinylResponseDto[];
+        total: number;
+        page: number;
+        limit: number;
+    }> {
+        const { page, limit } = paginationOptions;
+
+        const [vinyls, total] = await this.vinylRepository.findAndCount({
+            relations: ['reviews', 'reviews.user'],
+            skip: (page - 1) * limit,
+            take: limit,
+        });
+
+        const data = vinyls.map((vinyl) => {
+            const reviews = vinyl.reviews;
+
+            const averageScore =
+                this.reviewHelperService.calculateAverageScore(reviews);
+
+            const firstReviewFromAnotherUser =
+                this.reviewHelperService.getFirstReviewFromAnotherUser(reviews);
+
+            return plainToInstance(
+                ExtendedVinylResponseDto,
+                {
+                    ...vinyl,
+                    averageScore,
+                    firstReviewFromAnotherUser,
+                },
+                { excludeExtraneousValues: true }
+            );
         });
 
         return {
