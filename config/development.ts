@@ -17,6 +17,9 @@ export default () => ({
     admin: {
         email: process.env.ADMIN_EMAIL,
         password: process.env.ADMIN_PASSWORD,
+    },
+    stripe: {
+        secretKey: process.env.STRIPE_SECRET_KEY,
     }
 });
   

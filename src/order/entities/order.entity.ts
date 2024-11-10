@@ -20,6 +20,9 @@ export class Order {
     @Column()
     status: string;
 
+    @Column({ nullable: true })
+    stripeSessionId: string;
+
     @CreateDateColumn()
     createdAt: Date;
 
