@@ -4,9 +4,12 @@ import { MailerModule } from '@nestjs-modules/mailer';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { EmailService } from './email/email.service';
 import { NotificationListener } from './listeners/notification.listener';
+import { WinstonModule } from 'nest-winston';
+import { winstonConfig } from '../logger/winston-logger.config';
 
 @Module({
     imports: [
+        WinstonModule.forRoot(winstonConfig),
         ConfigModule,
         MailerModule.forRootAsync({
             imports: [ConfigModule],
@@ -25,6 +28,6 @@ import { NotificationListener } from './listeners/notification.listener';
         }),
     ],
     providers: [HashingService, EmailService, NotificationListener],
-    exports: [HashingService, EmailService, NotificationListener],
+    exports: [HashingService, EmailService, NotificationListener,],
 })
 export class SharedModule {}

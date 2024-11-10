@@ -7,8 +7,6 @@ import { ConfigModule } from '@nestjs/config';
 import { SharedModule } from '../../shared/shared.module';
 import development from '../../../config/development';
 import production from '../../../config/production';
-;
-
 @Module({
     imports: [
         SharedModule,
