@@ -17,6 +17,7 @@ import { WinstonModule } from 'nest-winston';
 import { winstonConfig } from './logger/winston-logger.config';
 import { AdminModule } from './admin/admin.module';
 import { ScheduleModule } from '@nestjs/schedule';
+import { EventEmitterModule } from '@nestjs/event-emitter';
 
 @Module({
     imports: [
@@ -37,6 +38,7 @@ import { ScheduleModule } from '@nestjs/schedule';
         SessionModule,
         AdminModule,
         ScheduleModule.forRoot(),
+        EventEmitterModule.forRoot(),
     ],
     controllers: [AppController],
     providers: [AppService],

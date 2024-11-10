@@ -11,6 +11,7 @@ import { UserProfileResponseDto } from 'src/user/dto/user-profile-response.dto';
 import { plainToInstance } from 'class-transformer';
 import { WINSTON_MODULE_PROVIDER } from 'nest-winston';
 import { Logger } from 'winston';
+import { EventEmitter2 } from '@nestjs/event-emitter';
 
 @Injectable()
 export class AuthService {
@@ -19,6 +20,7 @@ export class AuthService {
         private readonly jwtService: JwtService,
         private readonly hashingService: HashingService,
         private readonly sessionService: SessionService,
+        private readonly eventEmitter: EventEmitter2,
         @Inject(WINSTON_MODULE_PROVIDER) private readonly logger: Logger
     ) {}
 
@@ -87,6 +89,15 @@ export class AuthService {
         this.logger.info(`New user registered with ID: ${newUser.id}`, {
             action: 'register',
             userId: newUser.id,
+        });
+
+        this.eventEmitter.emit('notification', {
+            type: 'userRegistered',
+            payload: {
+                email: newUser.email,
+                firstName: newUser.firstName,
+                lastName: newUser.lastName,
+            },
         });
 
         return plainToInstance(UserProfileResponseDto, newUser);

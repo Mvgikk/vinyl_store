@@ -8,6 +8,7 @@ import { VinylService } from 'src/vinyl/vinyl.service';
 import { UserService } from 'src/user/user.service';
 import { WINSTON_MODULE_PROVIDER } from 'nest-winston';
 import { Logger } from 'winston';
+import { EventEmitter2 } from '@nestjs/event-emitter';
 
 @Injectable()
 export class OrderService {
@@ -19,7 +20,8 @@ export class OrderService {
         private readonly vinylService: VinylService,
         private readonly stripeService: StripeService,
         private readonly userService: UserService,
-        @Inject(WINSTON_MODULE_PROVIDER) private readonly logger: Logger
+        @Inject(WINSTON_MODULE_PROVIDER) private readonly logger: Logger,
+        private eventEmitter: EventEmitter2
     ) {}
 
     async findOrderBySessionId(sessionId: string): Promise<Order> {
@@ -30,7 +32,7 @@ export class OrderService {
 
         const order = await this.orderRepository.findOne({
             where: { stripeSessionId: sessionId },
-            relations: ['orderItems'],
+            relations: ['orderItems', 'user'],
         });
 
         if (!order) {
@@ -50,6 +52,7 @@ export class OrderService {
 
         const order = await this.orderRepository.findOne({
             where: { id: orderId },
+            relations: ['user'],
         });
 
         if (!order) {
@@ -90,6 +93,7 @@ export class OrderService {
         );
         order.stripeSessionId = stripeSession.id;
         await this.orderRepository.save(order);
+
         this.logger.info(
             `Order created with ID: ${order.id} and session ID: ${stripeSession.id}`,
             {
@@ -98,6 +102,15 @@ export class OrderService {
                 stripeSessionId: stripeSession.id,
             }
         );
+
+        this.eventEmitter.emit('notification', {
+            type: 'paymentInitiated',
+            payload: {
+                email: user.email,
+                orderId: order.id,
+                amount: totalPrice,
+            },
+        });
 
         return { url: stripeSession.url };
     }
@@ -122,6 +135,15 @@ export class OrderService {
                 { action: 'completeOrder', orderId: order.id }
             );
 
+            this.eventEmitter.emit('notification', {
+                type: 'paymentCompleted',
+                payload: {
+                    email: order.user.email,
+                    orderId: order.id,
+                    price: order.totalPrice,
+                },
+            });
+
             return {
                 message: 'Payment successful and order completed',
                 orderId: order.id,
@@ -140,6 +162,14 @@ export class OrderService {
         this.logger.info(`Order with ID ${orderId} has been canceled`, {
             action: 'cancelOrder',
             orderId,
+        });
+
+        this.eventEmitter.emit('notification', {
+            type: 'orderCanceled',
+            payload: {
+                email: order.user.email,
+                orderId: order.id,
+            },
         });
 
         return {

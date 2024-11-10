@@ -20,6 +20,13 @@ export default () => ({
     },
     stripe: {
         secretKey: process.env.STRIPE_SECRET_KEY,
-    }
+    },
+    email: {
+        host: process.env.EMAIL_HOST,
+        port: parseInt(process.env.EMAIL_PORT, 10),
+        user: process.env.EMAIL_USER,
+        password: process.env.EMAIL_PASSWORD,
+        secure: process.env.EMAIL_SECURE
+    },
 });
   
