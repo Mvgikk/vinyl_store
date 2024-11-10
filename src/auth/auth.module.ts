@@ -4,11 +4,11 @@ import { AuthService } from './auth.service';
 import { AuthController } from './auth.controller';
 import { JwtStrategy } from './strategies/jwt.strategy';
 import { ConfigModule, ConfigService } from '@nestjs/config';
-import { SharedModule } from 'src/shared/shared.module';
+import { SharedModule } from '../shared/shared.module';
 import { PassportModule } from '@nestjs/passport';
 import { GoogleStrategy } from './strategies/google.strategy';
-import { SessionModule } from 'src/session/session.module';
-import { UserModule } from 'src/user/user.module';
+import { SessionModule } from '../session/session.module';
+import { UserModule } from '../user/user.module';
 
 @Module({
     imports: [

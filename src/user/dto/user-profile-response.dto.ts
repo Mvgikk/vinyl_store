@@ -1,6 +1,6 @@
 import { Exclude, Expose, Type } from 'class-transformer';
-import { ResponseReviewDto } from 'src/review/dto/response-review.dto';
-import { VinylResponseDto } from 'src/vinyl/dto/vinyl-response.dto';
+import { ResponseReviewDto } from '../../review/dto/response-review.dto';
+import { VinylResponseDto } from '../../vinyl/dto/vinyl-response.dto';
 import { ApiProperty } from '@nestjs/swagger';
 
 @Exclude()

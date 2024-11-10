@@ -5,10 +5,10 @@ import { Vinyl } from './entities/vinyl.entity';
 import { CreateVinylDto } from './dto/create-vinyl.dto';
 import { UpdateVinylDto } from './dto/update-vinyl.dto';
 import { VinylQueryOptionsDto } from './dto/vinyl-query-options.dto';
-import { PaginationOptionsDto } from 'src/shared/dto/pagination-options.dto';
+import { PaginationOptionsDto } from '../shared/dto/pagination-options.dto';
 import { plainToInstance } from 'class-transformer';
 import { ExtendedVinylResponseDto } from './dto/extended-vinyl-response.dto';
-import { ReviewHelperService } from 'src/review/review-helper.service';
+import { ReviewHelperService } from '../review/review-helper.service';
 import { WINSTON_MODULE_PROVIDER } from 'nest-winston';
 import { Logger } from 'winston';
 @Injectable()

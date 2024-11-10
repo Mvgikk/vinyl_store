@@ -5,9 +5,9 @@ import { StripeService } from './stripe.service';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { Order } from './entities/order.entity';
 import { OrderItem } from './entities/order-item.entity';
-import { VinylModule } from 'src/vinyl/vinyl.module';
-import { UserModule } from 'src/user/user.module';
-import { SharedModule } from 'src/shared/shared.module';
+import { VinylModule } from '../vinyl/vinyl.module';
+import { UserModule } from '../user/user.module';
+import { SharedModule } from '../shared/shared.module';
 
 @Module({
     imports: [

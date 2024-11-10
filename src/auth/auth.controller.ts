@@ -14,7 +14,7 @@ import { AuthService } from './auth.service';
 import { LoginDto } from './dto/login.dto';
 import { RegisterDto } from './dto/register.dto';
 import { AuthGuard } from '@nestjs/passport';
-import { UserProfileResponseDto } from 'src/user/dto/user-profile-response.dto';
+import { UserProfileResponseDto } from '../user/dto/user-profile-response.dto';
 import {
     ApiTags,
     ApiOperation,

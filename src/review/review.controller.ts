@@ -10,9 +10,9 @@ import {
 import { AuthGuard } from '@nestjs/passport';
 import { ReviewService } from './review.service';
 import { CreateReviewDto } from './dto/create-review.dto';
-import { Roles } from 'src/shared/decorators/roles.decorator';
-import { Role } from 'src/shared/enums/roles.enum';
-import { RolesGuard } from 'src/shared/guards/roles.guard';
+import { Roles } from '../shared/decorators/roles.decorator';
+import { Role } from '../shared/enums/roles.enum';
+import { RolesGuard } from '../shared/guards/roles.guard';
 import {
     ApiTags,
     ApiBearerAuth,

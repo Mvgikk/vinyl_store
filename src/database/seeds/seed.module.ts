@@ -5,7 +5,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { TypeOrmConfigService } from '../typeorm-config.service';
 import { ConfigModule } from '@nestjs/config';
 import development from 'config/development';
-import { SharedModule } from 'src/shared/shared.module';
+import { SharedModule } from '../../shared/shared.module';
 import production from 'config/production';
 
 @Module({

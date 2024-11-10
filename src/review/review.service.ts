@@ -4,10 +4,10 @@ import { Repository } from 'typeorm';
 import { Review } from './entities/review.entity';
 import { CreateReviewDto } from './dto/create-review.dto';
 import { VinylService } from '../vinyl/vinyl.service';
-import { UserService } from 'src/user/user.service';
+import { UserService } from '../user/user.service';
 import { ResponseReviewDto } from './dto/response-review.dto';
 import { plainToInstance } from 'class-transformer';
-import { PaginationOptionsDto } from 'src/shared/dto/pagination-options.dto';
+import { PaginationOptionsDto } from '../shared/dto/pagination-options.dto';
 import { WINSTON_MODULE_PROVIDER } from 'nest-winston';
 import { Logger } from 'winston';
 @Injectable()

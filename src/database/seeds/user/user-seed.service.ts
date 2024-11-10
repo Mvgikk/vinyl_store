@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { User } from '../../../user/entities/user.entity';
-import { HashingService } from 'src/shared/hashing/hashing.service';
+import { HashingService } from '../../../shared/hashing/hashing.service';
 import { ConfigService } from '@nestjs/config';
 
 @Injectable()
