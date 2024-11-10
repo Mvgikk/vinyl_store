@@ -28,6 +28,6 @@ import { winstonConfig } from '../logger/winston-logger.config';
         }),
     ],
     providers: [HashingService, EmailService, NotificationListener],
-    exports: [HashingService, EmailService, NotificationListener,],
+    exports: [HashingService, EmailService, NotificationListener],
 })
 export class SharedModule {}
