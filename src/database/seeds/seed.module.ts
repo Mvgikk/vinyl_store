@@ -4,9 +4,10 @@ import { VinylSeedModule } from './vinyl/vinyl-seed.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { TypeOrmConfigService } from '../typeorm-config.service';
 import { ConfigModule } from '@nestjs/config';
-import development from 'config/development';
 import { SharedModule } from '../../shared/shared.module';
-import production from 'config/production';
+import development from '../../../config/development';
+import production from '../../../config/production';
+;
 
 @Module({
     imports: [
