@@ -25,7 +25,7 @@
     "seed": "ts-node -r tsconfig-paths/register src/database/seeds/run-seed.ts",
     "seed:rollback": "ts-node -r tsconfig-paths/register src/database/seeds/rollback-seed.ts",
     "typeorm:prod": "ts-node --project tsconfig.json ./node_modules/typeorm/cli.js",
-    "migration:run:prod": "npm run typeorm:prod migration:run -- -d ./src/database/data-source.ts"
+    "migration:run:prod": "npm run typeorm:prod migration:run -- -d ./src/database/data-source.production.ts"
   },
   "dependencies": {
     "@nestjs-modules/mailer": "^2.0.2",
