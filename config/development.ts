@@ -21,6 +21,7 @@ export default () => ({
     stripe: {
         secretKey: process.env.STRIPE_SECRET_KEY,
     },
+    appUrl: 'http://localhost:3000',
     email: {
         host: process.env.EMAIL_HOST,
         port: parseInt(process.env.EMAIL_PORT, 10),

@@ -17,6 +17,7 @@ export default () => ({
     stripe: {
         secretKey: process.env.STRIPE_SECRET_KEY,
     },
+    appUrl: 'https://vinyl-store-mgk-20a9e299b438.herokuapp.com', 
     email: {
         host: process.env.EMAIL_HOST,
         port: parseInt(process.env.EMAIL_PORT, 10),

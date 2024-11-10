@@ -5,11 +5,13 @@ import Stripe from 'stripe';
 @Injectable()
 export class StripeService {
     private stripe: Stripe;
+    private appUrl: string;
 
     constructor(private configService: ConfigService) {
         this.stripe = new Stripe(this.configService.get('stripe.secretKey'), {
             apiVersion: '2024-10-28.acacia',
         });
+        this.appUrl = this.configService.get<string>('appUrl');
     }
 
     async createCheckoutSession(
@@ -35,9 +37,8 @@ export class StripeService {
                 quantity: item.quantity,
             })),
             mode: 'payment',
-            success_url:
-                'http://localhost:3000/order/complete?session_id={CHECKOUT_SESSION_ID}',
-            cancel_url: `http://localhost:3000/order/cancel?orderId=${orderId}`,
+            success_url: `${this.appUrl}/order/complete?session_id={CHECKOUT_SESSION_ID}`,
+            cancel_url: `${this.appUrl}/order/cancel?orderId=${orderId}`,
         });
     }
 
