@@ -18,13 +18,18 @@ import { winstonConfig } from './logger/winston-logger.config';
 import { AdminModule } from './admin/admin.module';
 import { ScheduleModule } from '@nestjs/schedule';
 import { EventEmitterModule } from '@nestjs/event-emitter';
+import production from 'config/production';
 
 @Module({
     imports: [
         WinstonModule.forRoot(winstonConfig),
         ConfigModule.forRoot({
             isGlobal: true,
-            load: [development],
+            load: [
+                process.env.NODE_ENV === 'production'
+                    ? production
+                    : development,
+            ],
         }),
         TypeOrmModule.forRootAsync({
             useClass: TypeOrmConfigService,
