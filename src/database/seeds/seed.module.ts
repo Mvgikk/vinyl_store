@@ -6,6 +6,7 @@ import { TypeOrmConfigService } from '../typeorm-config.service';
 import { ConfigModule } from '@nestjs/config';
 import development from 'config/development';
 import { SharedModule } from 'src/shared/shared.module';
+import production from 'config/production';
 
 @Module({
     imports: [
@@ -14,7 +15,11 @@ import { SharedModule } from 'src/shared/shared.module';
         VinylSeedModule,
         ConfigModule.forRoot({
             isGlobal: true,
-            load: [development],
+            load: [
+                process.env.NODE_ENV === 'production'
+                    ? production
+                    : development,
+            ],
         }),
         TypeOrmModule.forRootAsync({
             useClass: TypeOrmConfigService,
