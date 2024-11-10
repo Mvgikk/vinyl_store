@@ -94,11 +94,35 @@ export class UserService {
     }
 
     async getProfile(userId: number): Promise<UserProfileResponseDto> {
-        const user = await this.findOneById(userId);
+        const user = await this.userRepository.findOne({
+            where: { id: userId },
+            relations: [
+                'reviews',
+                'orders',
+                'orders.orderItems',
+                'orders.orderItems.vinyl',
+            ],
+        });
+
+        if (!user) {
+            throw new NotFoundException(`User with ID ${userId} not found`);
+        }
+
+        const purchasedVinyls = user.orders
+            .filter((order) => order.status === 'completed')
+            .flatMap((order) => order.orderItems.map((item) => item.vinyl));
+
+        const userProfile = plainToInstance(UserProfileResponseDto, {
+            ...user,
+            reviews: user.reviews,
+            purchasedVinyls,
+        });
+
         this.logger.info(`Fetched profile for user ID: ${userId}`, {
             action: 'getProfile',
             userId,
         });
-        return plainToInstance(UserProfileResponseDto, user);
+
+        return userProfile;
     }
 }
