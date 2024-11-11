@@ -30,7 +30,7 @@ export class TypeOrmConfigService implements TypeOrmOptionsFactory {
             ssl: false,
             entities: [__dirname + '/../**/*.entity{.ts,.js}'],
             migrations: [__dirname + '/migrations/**/*{.ts,.js}'],
-            synchronize: true,
+            synchronize: false,
             logging: true,
         };
 

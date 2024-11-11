@@ -12,6 +12,7 @@ import { plainToInstance } from 'class-transformer';
 import { WINSTON_MODULE_PROVIDER } from 'nest-winston';
 import { Logger } from 'winston';
 import { EventEmitter2 } from '@nestjs/event-emitter';
+import { Express } from 'express';
 
 @Injectable()
 export class AuthService {
@@ -79,16 +80,23 @@ export class AuthService {
         return { access_token: token };
     }
 
-    async register(registerDto: RegisterDto): Promise<UserProfileResponseDto> {
+    async register(
+        registerDto: RegisterDto,
+        file?: Express.Multer.File
+    ): Promise<UserProfileResponseDto> {
         const hashedPassword = await this.hashingService.hashPassword(
             registerDto.password
         );
         const userToCreate = { ...registerDto, password: hashedPassword };
 
-        const newUser = await this.userService.createUser(userToCreate);
-        this.logger.info(`New user registered with ID: ${newUser.id}`, {
+        const newUser = await this.userService.createUser(
+            userToCreate,
+            file?.buffer
+        );
+
+        this.logger.info(`New user registered with Email: ${newUser.email}`, {
             action: 'register',
-            userId: newUser.id,
+            userEmail: newUser.email,
         });
 
         this.eventEmitter.emit('notification', {

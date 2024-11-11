@@ -21,19 +21,32 @@ export class UserService {
         @Inject(WINSTON_MODULE_PROVIDER) private readonly logger: Logger
     ) {}
 
-    async createUser(registerDto: RegisterDto): Promise<User> {
+    async createUser(registerDto: RegisterDto, avatar?: Buffer): Promise<User> {
         const existingUser = await this.findOneByEmail(registerDto.email);
         if (existingUser) {
             throw new BadRequestException('Email already exists');
         }
 
-        const user = this.userRepository.create(registerDto);
+        const user = this.userRepository.create({
+            ...registerDto,
+            avatar,
+        });
         const savedUser = await this.userRepository.save(user);
         this.logger.info(`Created new user with ID: ${savedUser.id}`, {
             action: 'createUser',
             userId: savedUser.id,
         });
         return savedUser;
+    }
+
+    async updateAvatar(userId: number, avatar: Buffer): Promise<void> {
+        const user = await this.findOneById(userId);
+        user.avatar = avatar;
+        await this.userRepository.save(user);
+        this.logger.info(`Updated avatar for user ID: ${userId}`, {
+            action: 'updateAvatar',
+            userId,
+        });
     }
 
     async findAll(): Promise<User[]> {
@@ -112,17 +125,34 @@ export class UserService {
             .filter((order) => order.status === 'completed')
             .flatMap((order) => order.orderItems.map((item) => item.vinyl));
 
-        const userProfile = plainToInstance(UserProfileResponseDto, {
-            ...user,
-            reviews: user.reviews,
-            purchasedVinyls,
-        });
-
         this.logger.info(`Fetched profile for user ID: ${userId}`, {
             action: 'getProfile',
             userId,
         });
 
+        const userProfile = plainToInstance(UserProfileResponseDto, {
+            ...user,
+            avatarUrl: user.avatar ? `/user/profile/avatar/${user.id}` : null,
+            reviews: user.reviews,
+            purchasedVinyls,
+        });
+
         return userProfile;
+    }
+
+    async removeAvatar(userId: number): Promise<void> {
+        const user = await this.findOneById(userId);
+
+        if (!user.avatar) {
+            throw new NotFoundException('Avatar not found');
+        }
+
+        user.avatar = null;
+        await this.userRepository.save(user);
+
+        this.logger.info(`Avatar removed for user ID: ${userId}`, {
+            action: 'removeAvatar',
+            userId,
+        });
     }
 }

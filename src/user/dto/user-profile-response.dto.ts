@@ -5,6 +5,10 @@ import { ApiProperty } from '@nestjs/swagger';
 
 @Exclude()
 export class UserProfileResponseDto {
+    @ApiProperty({ description: 'User ID' })
+    @Expose()
+    id: number;
+
     @ApiProperty({ description: 'User email address' })
     @Expose()
     email: string;

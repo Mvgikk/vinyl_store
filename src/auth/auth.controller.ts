@@ -9,6 +9,7 @@ import {
     ClassSerializerInterceptor,
     HttpCode,
     HttpStatus,
+    UploadedFile,
 } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { LoginDto } from './dto/login.dto';
@@ -20,7 +21,10 @@ import {
     ApiOperation,
     ApiResponse,
     ApiBearerAuth,
+    ApiConsumes,
 } from '@nestjs/swagger';
+import { FileInterceptor } from '@nestjs/platform-express';
+import { Express } from 'express';
 
 @ApiTags('auth')
 @Controller('auth')
@@ -36,7 +40,9 @@ export class AuthController {
     async login(@Body() loginDto: LoginDto) {
         return this.authService.login(loginDto);
     }
+
     @ApiOperation({ summary: 'User registration' })
+    @ApiConsumes('multipart/form-data')
     @ApiResponse({
         status: 201,
         description: 'User successfully registered',
@@ -44,10 +50,17 @@ export class AuthController {
     })
     @ApiResponse({ status: 400, description: 'Email already exists' })
     @Post('register')
+    @UseInterceptors(FileInterceptor('file'))
     async register(
-        @Body() registerDto: RegisterDto
+        @Body() registerDto: RegisterDto,
+        @UploadedFile() file?: Express.Multer.File
     ): Promise<UserProfileResponseDto> {
-        return await this.authService.register(registerDto);
+        if (file) {
+            console.log(`Received file with size: ${file.size} bytes`);
+        } else {
+            console.log('No file received');
+        }
+        return await this.authService.register(registerDto, file);
     }
 
     @ApiOperation({ summary: 'Initiate Google OAuth2 login' })

@@ -29,8 +29,8 @@ export class User {
     @Column({ type: 'date' })
     birthdate: Date;
 
-    @Column({ nullable: true })
-    avatarUrl: string;
+    @Column({ type: 'bytea', nullable: true })
+    avatar: Buffer;
 
     @Column({ default: 'user' })
     role: string;
