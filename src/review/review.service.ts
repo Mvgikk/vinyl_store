@@ -27,7 +27,16 @@ export class ReviewService {
         const vinyl = await this.vinylService.findOneById(
             createReviewDto.vinylId
         );
+        if (!vinyl) {
+            throw new NotFoundException(
+                `Vinyl with ID ${createReviewDto.vinylId} not found`
+            );
+        }
+
         const user = await this.userService.findOneById(userId);
+        if (!user) {
+            throw new NotFoundException(`User with ID ${userId} not found`);
+        }
 
         const review = this.reviewRepository.create({
             ...createReviewDto,
@@ -48,10 +57,10 @@ export class ReviewService {
             excludeExtraneousValues: true,
         });
     }
-    async findOneById(id: number): Promise<Review> {
+    async findOneById(id: number): Promise<Review | null> {
         const review = await this.reviewRepository.findOne({ where: { id } });
         if (!review) {
-            throw new NotFoundException(`Review with ID ${id} not found`);
+            return null;
         }
         this.logger.info(`Fetched review with ID: ${id}`, {
             action: 'findOneById',
@@ -62,6 +71,9 @@ export class ReviewService {
 
     async deleteReview(reviewId: number): Promise<void> {
         const review = await this.findOneById(reviewId);
+        if (!review) {
+            throw new NotFoundException(`Review with ID ${reviewId} not found`);
+        }
         await this.reviewRepository.remove(review);
         this.logger.info(`Deleted review with ID: ${reviewId}`, {
             action: 'deleteReview',
@@ -78,6 +90,10 @@ export class ReviewService {
         page: number;
         limit: number;
     }> {
+        const vinyl = await this.vinylService.findOneById(vinylId);
+        if (!vinyl) {
+            throw new NotFoundException(`Vinyl with ID ${vinylId} not found`);
+        }
         const { page, limit } = paginationOptions;
 
         const [reviews, total] = await this.reviewRepository.findAndCount({

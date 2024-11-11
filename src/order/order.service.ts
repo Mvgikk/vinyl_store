@@ -24,7 +24,7 @@ export class OrderService {
         private eventEmitter: EventEmitter2
     ) {}
 
-    async findOrderBySessionId(sessionId: string): Promise<Order> {
+    async findOrderBySessionId(sessionId: string): Promise<Order | null> {
         this.logger.info(`Fetching order for session ID: ${sessionId}`, {
             action: 'findOrderBySessionId',
             sessionId,
@@ -36,15 +36,13 @@ export class OrderService {
         });
 
         if (!order) {
-            throw new NotFoundException(
-                `Order not found for session ID ${sessionId}`
-            );
+            return null;
         }
 
         return order;
     }
 
-    async findOrderById(orderId: number): Promise<Order> {
+    async findOrderById(orderId: number): Promise<Order | null> {
         this.logger.info(`Fetching order with ID: ${orderId}`, {
             action: 'findOrderById',
             orderId,
@@ -56,7 +54,7 @@ export class OrderService {
         });
 
         if (!order) {
-            throw new NotFoundException(`Order with ID ${orderId} not found`);
+            return null;
         }
 
         return order;
@@ -78,6 +76,9 @@ export class OrderService {
             0
         );
         const user = await this.userService.findOneById(userId);
+        if (!user) {
+            throw new NotFoundException(`User with ID ${userId} not found`);
+        }
 
         const order = this.orderRepository.create({
             user,
@@ -127,6 +128,11 @@ export class OrderService {
 
         if (session.payment_status === 'paid') {
             const order = await this.findOrderBySessionId(sessionId);
+            if (!order) {
+                throw new NotFoundException(
+                    `Order not found for session ID ${sessionId}`
+                );
+            }
 
             order.status = 'completed';
             await this.orderRepository.save(order);
@@ -155,6 +161,9 @@ export class OrderService {
 
     async cancelOrder(orderId: number): Promise<{ message: string }> {
         const order = await this.findOrderById(orderId);
+        if (!order) {
+            throw new NotFoundException(`Order with ID ${orderId} not found`);
+        }
 
         order.status = 'canceled';
         await this.orderRepository.save(order);
@@ -183,6 +192,11 @@ export class OrderService {
         return Promise.all(
             items.map(async (item) => {
                 const vinyl = await this.vinylService.findOneById(item.vinylId);
+                if (!vinyl) {
+                    throw new NotFoundException(
+                        `Vinyl with ID ${item.vinylId} not found`
+                    );
+                }
 
                 const orderItem = new OrderItem();
                 orderItem.vinyl = vinyl;

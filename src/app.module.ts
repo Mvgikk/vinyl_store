@@ -3,7 +3,7 @@ import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { ConfigModule } from '@nestjs/config';
 import { UserModule } from './user/user.module';
-import development from 'config/development';
+import development from '../config/development';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { TypeOrmConfigService } from './database/typeorm-config.service';
 import { VinylModule } from './vinyl/vinyl.module';
@@ -18,8 +18,8 @@ import { winstonConfig } from './logger/winston-logger.config';
 import { AdminModule } from './admin/admin.module';
 import { ScheduleModule } from '@nestjs/schedule';
 import { EventEmitterModule } from '@nestjs/event-emitter';
-import production from 'config/production';
-import test from 'config/test';
+import production from '../config/production';
+import test from '../config/test';
 
 @Module({
     imports: [

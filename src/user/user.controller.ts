@@ -107,6 +107,9 @@ export class UserController {
     @Get('profile/avatar/:userId')
     async getAvatar(@Param('userId') userId: number, @Res() res: Response) {
         const user = await this.userService.findOneById(userId);
+        if (!user) {
+            throw new NotFoundException(`User with id ${userId} not found`);
+        }
         if (!user.avatar) {
             throw new NotFoundException('Avatar not found');
         }

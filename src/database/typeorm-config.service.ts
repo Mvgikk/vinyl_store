@@ -8,6 +8,7 @@ export class TypeOrmConfigService implements TypeOrmOptionsFactory {
 
     createTypeOrmOptions(): TypeOrmModuleOptions {
         const environment = this.configService.get<string>('environment');
+        console.log(`Current Environment: ${environment}`);
 
         const productionConfig: TypeOrmModuleOptions = {
             type: 'postgres',
@@ -30,7 +31,7 @@ export class TypeOrmConfigService implements TypeOrmOptionsFactory {
             entities: [__dirname + '/../**/*.entity{.ts,.js}'],
             migrations: [__dirname + '/migrations/**/*{.ts,.js}'],
             synchronize: false,
-            logging: true,
+            logging: false,
         };
 
         const testConfig: TypeOrmModuleOptions = {
@@ -44,7 +45,7 @@ export class TypeOrmConfigService implements TypeOrmOptionsFactory {
             entities: [__dirname + '/../**/*.entity{.ts,.js}'],
             migrations: [__dirname + '/migrations/**/*{.ts,.js}'],
             synchronize: false,
-            logging: true,
+            logging: false,
         };
 
         if (environment === 'production') {

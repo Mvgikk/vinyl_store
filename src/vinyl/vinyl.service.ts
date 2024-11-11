@@ -99,10 +99,10 @@ export class VinylService {
         return savedVinyl;
     }
 
-    async findOneById(id: number): Promise<Vinyl> {
+    async findOneById(id: number): Promise<Vinyl | null> {
         const vinyl = await this.vinylRepository.findOne({ where: { id } });
         if (!vinyl) {
-            throw new NotFoundException(`Vinyl record with ID ${id} not found`);
+            return null;
         }
         this.logger.info(`Fetched vinyl with ID: ${id}`, {
             action: 'find',
@@ -116,6 +116,9 @@ export class VinylService {
         updateVinylDto: UpdateVinylDto
     ): Promise<Vinyl> {
         const vinyl = await this.findOneById(id);
+        if (!vinyl) {
+            throw new NotFoundException(`Vinyl record with ID ${id} not found`);
+        }
         Object.assign(vinyl, updateVinylDto);
         const updatedVinyl = await this.vinylRepository.save(vinyl);
         this.logger.info(`Updated vinyl with ID: ${updatedVinyl.id}`, {
@@ -127,6 +130,9 @@ export class VinylService {
 
     async deleteVinyl(id: number): Promise<void> {
         const vinyl = await this.findOneById(id);
+        if (!vinyl) {
+            throw new NotFoundException(`Vinyl record with ID ${id} not found`);
+        }
         await this.vinylRepository.remove(vinyl);
         this.logger.info(`Deleted vinyl with ID: ${id}`, {
             action: 'delete',

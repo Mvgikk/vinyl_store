@@ -41,6 +41,9 @@ export class UserService {
 
     async updateAvatar(userId: number, avatar: Buffer): Promise<void> {
         const user = await this.findOneById(userId);
+        if (!user) {
+            throw new NotFoundException(`User with ID ${userId} not found`);
+        }
         user.avatar = avatar;
         await this.userRepository.save(user);
         this.logger.info(`Updated avatar for user ID: ${userId}`, {
@@ -58,10 +61,10 @@ export class UserService {
         return users;
     }
 
-    async findOneById(id: number): Promise<User> {
+    async findOneById(id: number): Promise<User | null> {
         const user = await this.userRepository.findOne({ where: { id } });
         if (!user) {
-            throw new NotFoundException(`User with ID ${id} not found`);
+            return null;
         }
         this.logger.info(`Fetched user with ID: ${id}`, {
             action: 'findOneById',
@@ -87,6 +90,9 @@ export class UserService {
         updateProfileDto: UpdateProfileDto
     ): Promise<UserProfileResponseDto> {
         const user = await this.findOneById(userId);
+        if (!user) {
+            throw new NotFoundException(`User with ID ${userId} not found`);
+        }
         Object.assign(user, updateProfileDto);
         const updatedUser = await this.userRepository.save(user);
         this.logger.info(`Updated profile for user ID: ${userId}`, {
@@ -99,6 +105,9 @@ export class UserService {
 
     async removeUser(id: number): Promise<void> {
         const user = await this.findOneById(id);
+        if (!user) {
+            throw new NotFoundException(`User with ID ${id} not found`);
+        }
         await this.userRepository.remove(user);
         this.logger.info(`Removed user with ID: ${id}`, {
             action: 'removeUser',
@@ -142,7 +151,9 @@ export class UserService {
 
     async removeAvatar(userId: number): Promise<void> {
         const user = await this.findOneById(userId);
-
+        if (!user) {
+            throw new NotFoundException(`User with ID ${userId} not found`);
+        }
         if (!user.avatar) {
             throw new NotFoundException('Avatar not found');
         }

@@ -1,4 +1,4 @@
-import { Inject, Injectable, NotFoundException } from '@nestjs/common';
+import { Inject, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { LessThan, Repository } from 'typeorm';
 import { Session } from './session.entity';
@@ -51,14 +51,12 @@ export class SessionService {
         });
     }
 
-    async findOneById(sessionId: number): Promise<Session> {
+    async findOneById(sessionId: number): Promise<Session | null> {
         const session = await this.sessionRepository.findOne({
             where: { id: sessionId },
         });
         if (!session) {
-            throw new NotFoundException(
-                `Session with ID ${sessionId} not found`
-            );
+            return null;
         }
         this.logger.info(`Found session with ID: ${sessionId}`, {
             action: 'findOneById',
