@@ -16,7 +16,7 @@
     "prepare": "husky",
     "test": "cross-env NODE_ENV=test npx tsx --test src/**/*.spec.ts",
     "build:test": "tsc --project tsconfig.test.json",
-    "test:e2e": "npm run build:test && node --test dist/test/**/*.e2e-spec.js",
+    "test:e2e": "cross-env NODE_ENV=test npm run build:test && node --test dist/test/**/*.e2e-spec.js",
     "typeorm": "ts-node -r tsconfig-paths/register ./node_modules/typeorm/cli.js",
     "migration:run": "npm run typeorm migration:run -- -d ./src/database/data-source.ts",
     "migration:generate": "npm run typeorm -- -d ./src/database/data-source.ts migration:generate ./src/database/migrations/%npm_config_name%",
@@ -27,7 +27,9 @@
     "typeorm:prod": "ts-node --project tsconfig.json ./node_modules/typeorm/cli.js",
     "migration:generate:prod": "npm run typeorm:prod -- -d ./src/database/data-source.production.ts migration:generate ./src/database/migrations/$npm_config_name",
     "migration:run:prod": "npm run typeorm:prod migration:run -- -d ./src/database/data-source.production.ts",
-    "seed:prod": "ts-node --project tsconfig.json src/database/seeds/run-seed.ts"
+    "seed:prod": "ts-node --project tsconfig.json src/database/seeds/run-seed.ts",
+    "seed:test": "cross-env NODE_ENV=test ts-node -r tsconfig-paths/register src/database/seeds/run-seed.ts",
+    "migration:run:test": "npm run typeorm:prod migration:run -- -d ./src/database/data-source.testing.ts"
   },
   "dependencies": {
     "@nestjs-modules/mailer": "^2.0.2",

@@ -7,6 +7,8 @@ import { ConfigModule } from '@nestjs/config';
 import { SharedModule } from '../../shared/shared.module';
 import development from '../../../config/development';
 import production from '../../../config/production';
+import test from '../../../config/test';
+
 @Module({
     imports: [
         SharedModule,
@@ -17,8 +19,11 @@ import production from '../../../config/production';
             load: [
                 process.env.NODE_ENV === 'production'
                     ? production
-                    : development,
+                    : process.env.NODE_ENV === 'test'
+                      ? test
+                      : development,
             ],
+            envFilePath: process.env.NODE_ENV === 'test' ? '.env.test' : '.env',
         }),
         TypeOrmModule.forRootAsync({
             useClass: TypeOrmConfigService,

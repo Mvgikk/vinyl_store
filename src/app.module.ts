@@ -19,6 +19,7 @@ import { AdminModule } from './admin/admin.module';
 import { ScheduleModule } from '@nestjs/schedule';
 import { EventEmitterModule } from '@nestjs/event-emitter';
 import production from 'config/production';
+import test from 'config/test';
 
 @Module({
     imports: [
@@ -28,8 +29,11 @@ import production from 'config/production';
             load: [
                 process.env.NODE_ENV === 'production'
                     ? production
-                    : development,
+                    : process.env.NODE_ENV === 'test'
+                      ? test
+                      : development,
             ],
+            envFilePath: process.env.NODE_ENV === 'test' ? '.env.test' : '.env',
         }),
         TypeOrmModule.forRootAsync({
             useClass: TypeOrmConfigService,
