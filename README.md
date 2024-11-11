@@ -1,99 +1,273 @@
-<p align="center">
-  <a href="http://nestjs.com/" target="blank"><img src="https://nestjs.com/img/logo-small.svg" width="120" alt="Nest Logo" /></a>
-</p>
 
-[circleci-image]: https://img.shields.io/circleci/build/github/nestjs/nest/master?token=abc123def456
-[circleci-url]: https://circleci.com/gh/nestjs/nest
+  
 
-  <p align="center">A progressive <a href="http://nodejs.org" target="_blank">Node.js</a> framework for building efficient and scalable server-side applications.</p>
-    <p align="center">
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/v/@nestjs/core.svg" alt="NPM Version" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/l/@nestjs/core.svg" alt="Package License" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/dm/@nestjs/common.svg" alt="NPM Downloads" /></a>
-<a href="https://circleci.com/gh/nestjs/nest" target="_blank"><img src="https://img.shields.io/circleci/build/github/nestjs/nest/master" alt="CircleCI" /></a>
-<a href="https://coveralls.io/github/nestjs/nest?branch=master" target="_blank"><img src="https://coveralls.io/repos/github/nestjs/nest/badge.svg?branch=master#9" alt="Coverage" /></a>
-<a href="https://discord.gg/G7Qnnhy" target="_blank"><img src="https://img.shields.io/badge/discord-online-brightgreen.svg" alt="Discord"/></a>
-<a href="https://opencollective.com/nest#backer" target="_blank"><img src="https://opencollective.com/nest/backers/badge.svg" alt="Backers on Open Collective" /></a>
-<a href="https://opencollective.com/nest#sponsor" target="_blank"><img src="https://opencollective.com/nest/sponsors/badge.svg" alt="Sponsors on Open Collective" /></a>
-  <a href="https://paypal.me/kamilmysliwiec" target="_blank"><img src="https://img.shields.io/badge/Donate-PayPal-ff3f59.svg" alt="Donate us"/></a>
-    <a href="https://opencollective.com/nest#sponsor"  target="_blank"><img src="https://img.shields.io/badge/Support%20us-Open%20Collective-41B883.svg" alt="Support us"></a>
-  <a href="https://twitter.com/nestframework" target="_blank"><img src="https://img.shields.io/twitter/follow/nestframework.svg?style=social&label=Follow" alt="Follow us on Twitter"></a>
-</p>
-  <!--[![Backers on Open Collective](https://opencollective.com/nest/backers/badge.svg)](https://opencollective.com/nest#backer)
-  [![Sponsors on Open Collective](https://opencollective.com/nest/sponsors/badge.svg)](https://opencollective.com/nest#sponsor)-->
+# Vinyl Store Backend
 
-## Description
+  
 
-[Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
+Backend API for a vinyl store, built with NestJS. This project includes user authentication, role-based access, Google OAuth, order management, and review handling. It also provides email notifications, Stripe integration for payments, and the ability to upload and manage user avatars stored in PostgreSQL as BLOBs. 
 
-## Project setup
+  
+
+## Table of Contents
+
+- [Requirements](#requirements)
+
+
+- [Configuration](#configuration)
+
+- [Running the Application](#running-the-application)
+
+- [Database Migrations](#database-migrations)
+
+- [Seeding the Database](#seeding-the-database)
+
+- [Testing](#testing)
+
+- [Deployment](#deployment)
+
+- [API Documentation](#api-documentation)
+
+  
+
+## Requirements
+
+- Node.js 22.11.0
+
+- PostgreSQL
+
+- Stripe account (for payment processing)
+
+- Google Cloud account (for OAuth)
+
+  
+
+
+  
+
+
+## Configuration
+
+  
+
+Configuration files are located in the `config` folder. Environment-specific settings are used to define the application's behavior in development, testing, and production environments.
+
+  
+
+-  `development`: Default for local development. Uses `.env`.
+
+-  `production`: Configured for Heroku deployment, using `DATABASE_URL` and other secure environment variables in Heroku Config Vars.
+
+-  `test`: Uses `.env.test` for test environment setup.
+
+  
+
+### Environment Variables
+
+  
+
+Required environment variables:
+
+-  `DATABASE_HOST`, `DATABASE_PORT`, `DATABASE_USER`, `DATABASE_PASSWORD`, `DATABASE_NAME`,`DATABASE_NAME_TEST`
+
+-  `JWT_SECRET`
+
+-  `GOOGLE_CLIENT_ID`, `GOOGLE_CLIENT_SECRET`, `GOOGLE_CALLBACK_URL`
+
+-  `STRIPE_SECRET_KEY`
+
+-  `EMAIL_HOST`, `EMAIL_PORT`, `EMAIL_USER`, `EMAIL_PASSWORD`, `EMAIL_SECURE`
+
+-  `ADMIN_EMAIL`, `ADMIN_PASSWORD`
+
+
+  
+
+## Running the Application
+
+  
+
+### Development
+
+  
 
 ```bash
-$ npm install
+
+npm  run  start:dev
+
 ```
 
-## Compile and run the project
+  
+
+### Production
+
+  
+
+  
+
+The application is available at `https://vinyl-store-mgk-20a9e299b438.herokuapp.com` 
+
+  
+
+## Database Migrations
+
+  
+
+
+The database schema is managed using TypeORM migrations. Run the following commands for different environments:
+
+  
+
+-  **Development**: Generate or run migrations locally
 
 ```bash
-# development
-$ npm run start
 
-# watch mode
-$ npm run start:dev
+npm run migration:generate --name=MigrationName
 
-# production mode
-$ npm run start:prod
+npm run migration:run
+
 ```
 
-## Run tests
+  
+
+-  **Production**: Run migrations on Heroku
 
 ```bash
-# unit tests
-$ npm run test
 
-# e2e tests
-$ npm run test:e2e
+heroku run npm run migration:run:prod -a app-name
 
-# test coverage
-$ npm run test:cov
 ```
+
+  
+
+## Seeding the Database
+
+  
+
+Run seeders to populate the database with initial data:
+
+  
+
+```bash
+
+npm  run  seed
+
+```
+Clears database:
+
+  
+
+```bash
+
+npm  run  seed:rollback
+
+```
+  
+
+For production:
+
+```bash
+
+npm  run  seed:prod
+
+```
+
+For testing:
+
+```bash
+
+npm  run  seed:test
+
+```
+  
+
+## Testing
+
+  
+Utilizes node:test.
+
+1. Set up the `.env.test` file with database configurations for testing.
+
+2. Run tests:
+
+```bash
+
+npm run test
+
+```
+
+3. Run e2e tests:
+
+```bash
+
+npm run test:e2e
+
+```
+
+  
 
 ## Deployment
 
-When you're ready to deploy your NestJS application to production, there are some key steps you can take to ensure it runs as efficiently as possible. Check out the [deployment documentation](https://docs.nestjs.com/deployment) for more information.
+  
 
-If you are looking for a cloud-based platform to deploy your NestJS application, check out [Mau](https://mau.nestjs.com), our official platform for deploying NestJS applications on AWS. Mau makes deployment straightforward and fast, requiring just a few simple steps:
+### Heroku
+
+1. Set up a Heroku project and add PostgreSQL.
+
+2. Configure `Config Vars` on Heroku with the environment variables.
+
+3. Push to Heroku:
 
 ```bash
-$ npm install -g mau
-$ mau deploy
+
+git push heroku main
+
 ```
 
-With Mau, you can deploy your application in just a few clicks, allowing you to focus on building features rather than managing infrastructure.
+  
 
-## Resources
+## API Documentation
 
-Check out a few resources that may come in handy when working with NestJS:
+  
 
-- Visit the [NestJS Documentation](https://docs.nestjs.com) to learn more about the framework.
-- For questions and support, please visit our [Discord channel](https://discord.gg/G7Qnnhy).
-- To dive deeper and get more hands-on experience, check out our official video [courses](https://courses.nestjs.com/).
-- Deploy your application to AWS with the help of [NestJS Mau](https://mau.nestjs.com) in just a few clicks.
-- Visualize your application graph and interact with the NestJS application in real-time using [NestJS Devtools](https://devtools.nestjs.com).
-- Need help with your project (part-time to full-time)? Check out our official [enterprise support](https://enterprise.nestjs.com).
-- To stay in the loop and get updates, follow us on [X](https://x.com/nestframework) and [LinkedIn](https://linkedin.com/company/nestjs).
-- Looking for a job, or have a job to offer? Check out our official [Jobs board](https://jobs.nestjs.com).
+API documentation is available via Swagger. 
 
-## Support
+  
 
-Nest is an MIT-licensed open source project. It can grow thanks to the sponsors and support by the amazing backers. If you'd like to join them, please [read more here](https://docs.nestjs.com/support).
+```
 
-## Stay in touch
+https://vinyl-store-mgk-20a9e299b438.herokuapp.com/api-docs
 
-- Author - [Kamil Myśliwiec](https://twitter.com/kammysliwiec)
-- Website - [https://nestjs.com](https://nestjs.com/)
-- Twitter - [@nestframework](https://twitter.com/nestframework)
+```
 
-## License
+  
 
-Nest is [MIT licensed](https://github.com/nestjs/nest/blob/master/LICENSE).
+## Key Features
+
+  
+
+-  **Authentication**: JWT, Google OAuth, and session whitelist.
+
+-  **Stripe Integration**: For payment processing.
+
+-  **Role-based Access**: Separate access for admins and users.
+
+-  **Logging**: Centralized logging with Winston.
+
+-  **Seeding and Migration**: Easy setup and management of database structure and initial data.
+
+### Avatar Image Upload
+
+  
+
+To upload avatar images:
+
+1. Select `multipart/form-data`.
+
+2. Use the `file` key to attach the image.
+
+  
+
+Avatars are stored as BLOBs in PostgreSQL, accessible via the `avatarUrl` provided in user profile data.
+  
+
