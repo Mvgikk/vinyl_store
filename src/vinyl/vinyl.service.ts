@@ -143,13 +143,16 @@ export class VinylService {
     async searchVinyls(
         queryOptions: VinylQueryOptionsDto
     ): Promise<{ data: Vinyl[]; total: number; page: number; limit: number }> {
-        const { name, author, page, limit } = queryOptions;
+        const { name, author, page, limit, sort, order } = queryOptions;
         const where: FindOptionsWhere<Vinyl> = {};
 
         if (name) where.name = Like(`%${name}%`);
         if (author) where.author = Like(`%${author}%`);
+        
 
-        const orderOptions = queryOptions.getSortingOptions();
+        const orderOptions = {
+            [sort || 'name']: (order || 'asc').toUpperCase(),
+        };
 
         const [data, total] = await this.vinylRepository.findAndCount({
             where,

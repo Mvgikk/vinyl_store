@@ -12,11 +12,19 @@ export class EmailService {
         @Inject(WINSTON_MODULE_PROVIDER) private readonly logger: Logger
     ) {}
 
+    private shouldSendEmail(): boolean {
+        return this.configService.get<string>('environment') !== 'test';
+    }
+
     async sendUserRegisteredNotification(payload: {
         email: string;
         firstName: string;
         lastName: string;
     }) {
+        if (!this.shouldSendEmail()) {
+            this.logger.info(`Email sending is disabled in test environment. Would send email to: ${payload.email}`);
+            return;
+        }
         const { email, firstName, lastName } = payload;
 
         const mailOptions = {
@@ -51,6 +59,10 @@ export class EmailService {
         orderId: number;
         price: number;
     }) {
+        if (!this.shouldSendEmail()) {
+            this.logger.info(`Email sending is disabled in test environment. Would send email to: ${payload.email}`);
+            return;
+        }
         const { email, orderId, price } = payload;
         const mailOptions = {
             from: this.configService.get<string>('email.user'),
@@ -84,6 +96,10 @@ export class EmailService {
         orderId: number;
         price: number;
     }) {
+        if (!this.shouldSendEmail()) {
+            this.logger.info(`Email sending is disabled in test environment. Would send email to: ${payload.email}`);
+            return;
+        }
         const { email, orderId, price } = payload;
         const mailOptions = {
             from: this.configService.get<string>('email.user'),
@@ -116,6 +132,10 @@ export class EmailService {
         email: string;
         orderId: number;
     }) {
+        if (!this.shouldSendEmail()) {
+            this.logger.info(`Email sending is disabled in test environment. Would send email to: ${payload.email}`);
+            return;
+        }
         const { email, orderId } = payload;
         const mailOptions = {
             from: this.configService.get<string>('email.user'),

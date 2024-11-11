@@ -39,7 +39,5 @@ export class VinylQueryOptionsDto extends PaginationOptionsDto {
     @IsIn(['asc', 'desc'])
     order: 'asc' | 'desc' = 'asc';
 
-    getSortingOptions(): Record<string, 'ASC' | 'DESC'> {
-        return { [this.sort]: this.order.toUpperCase() as 'ASC' | 'DESC' };
-    }
+
 }

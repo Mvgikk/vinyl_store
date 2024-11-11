@@ -118,7 +118,6 @@ export class UserSeedService {
             lastName: 'Bartosik',
             role: 'admin',
             birthdate: '2000-08-06',
-            avatarUrl: null,
         };
         await this.userRepository.save(adminUser);
     }

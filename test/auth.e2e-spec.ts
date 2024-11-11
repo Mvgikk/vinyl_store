@@ -10,6 +10,14 @@ import { DataSource } from 'typeorm';
 let app: INestApplication;
 let dataSource: DataSource;
 
+async function clearDatabase(dataSource: DataSource) {
+    await dataSource.query('DELETE FROM "session";');
+    await dataSource.query('ALTER SEQUENCE session_id_seq RESTART WITH 1;');
+
+    await dataSource.query('DELETE FROM "user";');
+    await dataSource.query('ALTER SEQUENCE user_id_seq RESTART WITH 1;');
+}
+
 beforeEach(async () => {
     const moduleFixture: TestingModule = await Test.createTestingModule({
         imports: [AppModule],
@@ -18,13 +26,12 @@ beforeEach(async () => {
     app = moduleFixture.createNestApplication();
     await app.init();
     dataSource = moduleFixture.get<DataSource>(DataSource);
+    await clearDatabase(dataSource);
+
 });
 
 afterEach(async () => {
-    if (dataSource) {
-        await dataSource.query('DELETE FROM "user";');
-        await dataSource.query('ALTER SEQUENCE user_id_seq RESTART WITH 1;');
-    }
+    await clearDatabase(dataSource);
     await app.close();
 });
 
