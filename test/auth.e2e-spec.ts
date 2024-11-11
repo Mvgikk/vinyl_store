@@ -27,7 +27,6 @@ beforeEach(async () => {
     await app.init();
     dataSource = moduleFixture.get<DataSource>(DataSource);
     await clearDatabase(dataSource);
-
 });
 
 afterEach(async () => {

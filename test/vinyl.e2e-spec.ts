@@ -30,7 +30,7 @@ async function clearDatabase(dataSource: DataSource) {
 
 beforeEach(async () => {
     const moduleFixture: TestingModule = await Test.createTestingModule({
-        imports: [AppModule,SeedModule],
+        imports: [AppModule, SeedModule],
     }).compile();
 
     app = moduleFixture.createNestApplication();
@@ -41,9 +41,9 @@ beforeEach(async () => {
     const userSeedService = moduleFixture.get<UserSeedService>(UserSeedService);
     await userSeedService.createAdmin();
 
-    const vinylSeedService = moduleFixture.get<VinylSeedService>(VinylSeedService);
+    const vinylSeedService =
+        moduleFixture.get<VinylSeedService>(VinylSeedService);
     await vinylSeedService.run();
-
 
     const adminLoginResponse = await request(app.getHttpServer())
         .post('/auth/login')
@@ -53,16 +53,14 @@ beforeEach(async () => {
         });
     adminToken = adminLoginResponse.body.access_token;
 
-    await request(app.getHttpServer())
-        .post('/auth/register')
-        .send({
-            email: 'test@example.com',
-            password: 'userPassword123',
-            firstName: 'Regular',
-            lastName: 'User',
-            birthdate: '1995-05-05',
-        });
-    
+    await request(app.getHttpServer()).post('/auth/register').send({
+        email: 'test@example.com',
+        password: 'userPassword123',
+        firstName: 'Regular',
+        lastName: 'User',
+        birthdate: '1995-05-05',
+    });
+
     const userLoginResponse = await request(app.getHttpServer())
         .post('/auth/login')
         .send({
@@ -70,7 +68,6 @@ beforeEach(async () => {
             password: 'userPassword123',
         });
     userToken = userLoginResponse.body.access_token;
-
 
     const vinylResponse = await request(app.getHttpServer())
         .post('/vinyl')
@@ -108,7 +105,7 @@ test('POST /vinyl - create new vinyl (Admin only)', async () => {
             name: 'Sample Vinyl',
             author: 'Artist',
             description: 'Description',
-            price: 29.99
+            price: 29.99,
         });
 
     assert.strictEqual(response.status, 201);
@@ -123,7 +120,7 @@ test('PATCH /vinyl/:id - update vinyl by ID (Admin only)', async () => {
             name: 'Vinyl to Update',
             author: 'Original Artist',
             description: 'Original description',
-            price: 19.99
+            price: 19.99,
         });
     const vinylToUpdateId = createResponse.body.id;
 
@@ -134,7 +131,7 @@ test('PATCH /vinyl/:id - update vinyl by ID (Admin only)', async () => {
             name: 'Updated Vinyl Name',
             author: 'Updated Artist',
             description: 'Updated description',
-            price: 24.99
+            price: 24.99,
         });
 
     assert.strictEqual(response.status, 200);
@@ -149,7 +146,7 @@ test('DELETE /vinyl/:id - delete vinyl by ID (Admin only)', async () => {
             name: 'Vinyl to Delete',
             author: 'Artist',
             description: 'Description',
-            price: 15.99
+            price: 15.99,
         });
     const vinylToDeleteId = createResponse.body.id;
 
@@ -158,7 +155,10 @@ test('DELETE /vinyl/:id - delete vinyl by ID (Admin only)', async () => {
         .set('Authorization', `Bearer ${adminToken}`);
 
     assert.strictEqual(response.status, 200);
-    assert.strictEqual(response.body.message, 'Vinyl record deleted successfully');
+    assert.strictEqual(
+        response.body.message,
+        'Vinyl record deleted successfully'
+    );
 });
 
 test('GET /vinyl/search - search vinyl records', async () => {
@@ -169,7 +169,7 @@ test('GET /vinyl/search - search vinyl records', async () => {
             name: 'Searchable Vinyl',
             author: 'Artist',
             description: 'Description',
-            price: 45.99
+            price: 45.99,
         });
 
     const response = await request(app.getHttpServer())
@@ -178,7 +178,11 @@ test('GET /vinyl/search - search vinyl records', async () => {
 
     assert.strictEqual(response.status, 200);
     assert(Array.isArray(response.body.data));
-    assert(response.body.data.some((vinyl: any) => vinyl.name === 'Searchable Vinyl'));
+    assert(
+        response.body.data.some(
+            (vinyl: any) => vinyl.name === 'Searchable Vinyl'
+        )
+    );
 });
 
 test('POST /vinyl - regular user cannot create vinyl (Admin only)', async () => {
@@ -256,7 +260,6 @@ test('GET /vinyl/:vinylId/reviews - retrieve paginated reviews for vinyl', async
             comment: 'Second review',
             rating: 3,
         });
-
 
     const response = await request(app.getHttpServer())
         .get(`/vinyl/${vinylId}/reviews`)

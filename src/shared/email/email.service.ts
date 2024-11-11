@@ -22,7 +22,9 @@ export class EmailService {
         lastName: string;
     }) {
         if (!this.shouldSendEmail()) {
-            this.logger.info(`Email sending is disabled in test environment. Would send email to: ${payload.email}`);
+            this.logger.info(
+                `Email sending is disabled in test environment. Would send email to: ${payload.email}`
+            );
             return;
         }
         const { email, firstName, lastName } = payload;
@@ -60,7 +62,9 @@ export class EmailService {
         price: number;
     }) {
         if (!this.shouldSendEmail()) {
-            this.logger.info(`Email sending is disabled in test environment. Would send email to: ${payload.email}`);
+            this.logger.info(
+                `Email sending is disabled in test environment. Would send email to: ${payload.email}`
+            );
             return;
         }
         const { email, orderId, price } = payload;
@@ -97,7 +101,9 @@ export class EmailService {
         price: number;
     }) {
         if (!this.shouldSendEmail()) {
-            this.logger.info(`Email sending is disabled in test environment. Would send email to: ${payload.email}`);
+            this.logger.info(
+                `Email sending is disabled in test environment. Would send email to: ${payload.email}`
+            );
             return;
         }
         const { email, orderId, price } = payload;
@@ -133,7 +139,9 @@ export class EmailService {
         orderId: number;
     }) {
         if (!this.shouldSendEmail()) {
-            this.logger.info(`Email sending is disabled in test environment. Would send email to: ${payload.email}`);
+            this.logger.info(
+                `Email sending is disabled in test environment. Would send email to: ${payload.email}`
+            );
             return;
         }
         const { email, orderId } = payload;

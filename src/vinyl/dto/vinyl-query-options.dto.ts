@@ -38,6 +38,4 @@ export class VinylQueryOptionsDto extends PaginationOptionsDto {
     @IsOptional()
     @IsIn(['asc', 'desc'])
     order: 'asc' | 'desc' = 'asc';
-
-
 }

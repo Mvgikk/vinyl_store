@@ -49,15 +49,13 @@ beforeEach(async () => {
         });
     adminToken = adminLoginResponse.body.access_token;
 
-    await request(app.getHttpServer())
-        .post('/auth/register')
-        .send({
-            email: 'test@example.com',
-            password: 'securePassword123',
-            firstName: 'John',
-            lastName: 'Doe',
-            birthdate: '1990-01-01',
-        });
+    await request(app.getHttpServer()).post('/auth/register').send({
+        email: 'test@example.com',
+        password: 'securePassword123',
+        firstName: 'John',
+        lastName: 'Doe',
+        birthdate: '1990-01-01',
+    });
     const userLoginResponse = await request(app.getHttpServer())
         .post('/auth/login')
         .send({
@@ -114,7 +112,10 @@ test('DELETE /review/:id - delete a review (Admin only)', async () => {
         .set('Authorization', `Bearer ${adminToken}`);
 
     assert.strictEqual(deleteResponse.status, 200);
-    assert.strictEqual(deleteResponse.body.message, 'Review deleted successfully');
+    assert.strictEqual(
+        deleteResponse.body.message,
+        'Review deleted successfully'
+    );
 });
 
 test('DELETE /review/:id - regular user cannot delete review (Admin only) ', async () => {
@@ -132,5 +133,5 @@ test('DELETE /review/:id - regular user cannot delete review (Admin only) ', asy
         .delete(`/review/${reviewId}`)
         .set('Authorization', `Bearer ${userToken}`);
 
-    assert.strictEqual(deleteResponse.status, 403); 
+    assert.strictEqual(deleteResponse.status, 403);
 });

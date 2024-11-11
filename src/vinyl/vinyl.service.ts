@@ -148,7 +148,6 @@ export class VinylService {
 
         if (name) where.name = Like(`%${name}%`);
         if (author) where.author = Like(`%${author}%`);
-        
 
         const orderOptions = {
             [sort || 'name']: (order || 'asc').toUpperCase(),
