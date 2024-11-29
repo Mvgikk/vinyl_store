@@ -1,7 +1,7 @@
 import { MigrationInterface, QueryRunner } from 'typeorm';
 
 export class AddStripeSessionTableToOrder1731246079730
-    implements MigrationInterface
+implements MigrationInterface
 {
     name = 'AddStripeSessionTableToOrder1731246079730';
 

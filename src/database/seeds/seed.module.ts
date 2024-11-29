@@ -20,8 +20,8 @@ import test from '../../../config/test';
                 process.env.NODE_ENV === 'production'
                     ? production
                     : process.env.NODE_ENV === 'test'
-                      ? test
-                      : development,
+                        ? test
+                        : development,
             ],
             envFilePath: process.env.NODE_ENV === 'test' ? '.env.test' : '.env',
         }),

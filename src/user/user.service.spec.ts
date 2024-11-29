@@ -8,20 +8,20 @@ const mockUserRepository = {
         if (options.where.email) {
             return options.where.email === 'existing@example.com'
                 ? {
-                      id: 1,
-                      email: 'existing@example.com',
-                      password: 'hashedPassword',
-                      avatar: null,
-                  }
+                    id: 1,
+                    email: 'existing@example.com',
+                    password: 'hashedPassword',
+                    avatar: null,
+                }
                 : null;
         } else if (options.where.id) {
             return options.where.id === 1
                 ? {
-                      id: 1,
-                      email: 'existing@example.com',
-                      password: 'hashedPassword',
-                      avatar: null,
-                  }
+                    id: 1,
+                    email: 'existing@example.com',
+                    password: 'hashedPassword',
+                    avatar: null,
+                }
                 : null;
         }
         return null;

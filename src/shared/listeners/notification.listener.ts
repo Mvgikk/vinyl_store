@@ -10,29 +10,29 @@ export class NotificationListener {
     @OnEvent('notification')
     async handleNotificationEvent(event: NotificationEvent) {
         switch (event.type) {
-            case 'userRegistered':
-                await this.emailService.sendUserRegisteredNotification(
-                    event.payload
-                );
-                break;
+        case 'userRegistered':
+            await this.emailService.sendUserRegisteredNotification(
+                event.payload
+            );
+            break;
 
-            case 'paymentCompleted':
-                await this.emailService.sendPaymentNotification(event.payload);
-                break;
+        case 'paymentCompleted':
+            await this.emailService.sendPaymentNotification(event.payload);
+            break;
 
-            case 'paymentInitiated':
-                await this.emailService.sendPaymentInitiationNotification(
-                    event.payload
-                );
-                break;
+        case 'paymentInitiated':
+            await this.emailService.sendPaymentInitiationNotification(
+                event.payload
+            );
+            break;
 
-            case 'orderCanceled':
-                await this.emailService.sendOrderCancellationNotification(
-                    event.payload
-                );
-                break;
-            default:
-                console.warn(`Unhandled notification type: ${event.type}`);
+        case 'orderCanceled':
+            await this.emailService.sendOrderCancellationNotification(
+                event.payload
+            );
+            break;
+        default:
+            console.warn(`Unhandled notification type: ${event.type}`);
         }
     }
 }
